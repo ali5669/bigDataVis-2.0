@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>BigDataVis.html</title>
+    <script type="text/javascript" src="./js/d3.min.js"></script>
+	<meta name="description" content="this is my page">
+	<meta name="content-type" content="text/html; charset=utf-8">
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<style src = "index.css"></style>
+  </head>
+  <body>
+	<div id="main-container">
+		<div id="top" class="draggable">
+		  <!-- 顶部选项栏内容 -->
+		</div>
+		<div class = "row">
+			<div id="left" class="draggable">
+				<!-- 左侧SVG内容 -->
+				<svg width="2300" height="1400" id="graph"></svg>
+			</div>
+			<div id="content" class="draggable">
+				<!-- 中间内容 -->
+			</div>
+			<div id="right" class="draggable">
+				<!-- <select name="graph_name" id="graph_name">
+					<option value="main">main</option>
+					<option value="sub">sub</option>
+				</select> -->
+				<!-- 右侧参数调整内容 -->
+			</div>
+		</div>
+		<div id="bottom" class="draggable">
+		  <!-- 底部图表内容 -->
+			<svg id="vis"></svg>
+		</div>
+	</div>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<script src="js/graph.js"></script>
+	<!-- <script src="js/index.js"></script> -->
+  </body>
+</html>

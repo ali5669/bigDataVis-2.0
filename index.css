@@ -1,0 +1,77 @@
+svg{
+    margin-left: 5px;
+    margin-top: 5px;
+}
+
+input[type = range]{
+    
+    width:20px;
+}
+
+#main-container {
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
+    grid-template-rows: 1fr 5fr 1fr;
+    grid-template-areas:
+      "top top top"
+      "sidebar content right"
+      "bottom bottom bottom";
+}
+
+#top {
+grid-area: top;
+background-color: #f8f9fa;
+padding: 10%;
+}
+
+#left {
+grid-area: left;
+background-color: #f8f9fa;
+padding: 10px;
+}
+
+#content {
+grid-area: content;
+background-color: #ffffff;
+padding: 10px;
+}
+
+#right {
+grid-area: right;
+background-color: #f8f9fa;
+padding: 10px;
+}
+
+#bottom {
+grid-area: bottom;
+background-color: #f8f9fa;
+padding: 10px;
+}
+
+.draggable {
+resize: both;
+overflow: auto;
+position: relative;
+z-index: 1;
+}
+
+.row{
+    display: inline-block;
+}
+
+#tab-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.tab{
+    flex-grow: 1;
+    padding: 10px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    text-align: center;
+}
+

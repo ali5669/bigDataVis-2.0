@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Tab Widget Example</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <style>
+    .tab-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .tab-header {
+      display: flex;
+    }
+
+    .tab-header .tab {
+      flex-grow: 1;
+      padding: 10px;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      border-bottom: none;
+      text-align: center;
+    }
+
+    .tab-header .tab.active {
+      background-color: #f8f9fa;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .tab-content {
+      flex-grow: 1;
+      display: none;
+      padding: 20px;
+      border: 1px solid #ccc;
+      overflow-y: auto;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="tab-container">
+    <div class="tab-header">
+      <div class="tab active" data-target="page1">Page 1</div>
+      <div class="tab" data-target="page2">Page 2</div>
+      <div class="tab" data-target="page3">Page 3</div>
+      <div id="add-tab" class="tab">+</div>
+    </div>
+    <div id="page-container" class="tab-content active">
+      <h3>Page 1 Content</h3>
+      <!-- Add your content for Page 1 here -->
+    </div>
+    <div id="page2" class="tab-content">
+      <h3>Page 2 Content</h3>
+      <!-- Add your content for Page 2 here -->
+    </div>
+    <div id="page3" class="tab-content">
+      <h3>Page 3 Content</h3>
+      <!-- Add your content for Page 3 here -->
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var tabs = document.querySelectorAll('.tab');
+      var tabContents = document.querySelectorAll('.tab-content');
+
+      // Add click event listener to tabs
+      tabs.forEach(function(tab) {
+        tab.addEventListener('click', function() {
+          var target = tab.getAttribute('data-target');
+
+          // Remove active class from all tabs and tab contents
+          tabs.forEach(function(t) {
+            t.classList.remove('active');
+          });
+          tabContents.forEach(function(content) {
+            content.classList.remove('active');
+          });
+
+          // Add active class to the clicked tab and corresponding tab content
+          tab.classList.add('active');
+          document.getElementById(target).classList.add('active');
+        });
+      });
+
+      // Add click event listener to the "+" tab to add a new tab
+      document.getElementById('add-tab').addEventListener('click', function() {
+        var tabCount = document.querySelectorAll('.tab').length - 1;
+        var newTab = document.createElement('div');
+        newTab.classList.add('tab');
+        newTab.setAttribute('data-target', 'page' + (tabCount + 1));
+        newTab.textContent = 'Page ' + (tabCount + 1);
+        newTab.addEventListener('click', function() {
+          var target = newTab.getAttribute('data-target');
+
+          // Remove active class from all tabs and tab contents
+          tabs.forEach(function(tab) {
+            tab.classList.remove('active');
+          });
+          tabContents.forEach(function(content) {
+            content.classList.remove('active');
+          });
+
+          // Add active class to the clicked tab and corresponding tab content
+          newTab.classList.add('active');
+          document.getElementById(target).classList.add('active');
+        });
+
+        // Insert the new tab before the "+" tab
+        document.getElementById('add-tab').insertAdjacentElement('beforebegin', newTab);
+
+        // Create a new tab content div and insert it into the page container
+        var newTabContent = document.createElement('div');
+        newTabContent.id = 'page' + (tabCount + 1);
+        newTabContent.classList.add('tab-content');
+        newTabContent.innerHTML = '<h3>Page ' + (tabCount + 1) + ' Content</h3>';
+        document.getElementById('page-container').appendChild(newTabContent);
+      });
+    });
+  </script>
+</body>
+</html>
