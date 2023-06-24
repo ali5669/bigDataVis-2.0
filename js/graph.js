@@ -85,6 +85,9 @@ addOption2ComboBox("data");
 addOption2ComboBox("8327");
 addOption2ComboBox("Mar de la Vida OJSC");
 
+//右侧节点监视器
+
+
 // 绘制
 var render = function(){
     svg.selectAll("*").remove();//直接jquery的remove()就行
@@ -105,9 +108,50 @@ var render = function(){
         var edgeType = data.edge_type_list;
 
         //设置一个color的颜色比例尺，为了让不同的顶点呈现不同的颜色
-        var colorScale = d3.scaleOrdinal()
-            .domain(d3.range(nodes.length))
-            .range(d3.schemeCategory10);
+        const nodeColorScale = d3.scaleOrdinal(d3.schemeCategory10)
+            .domain(Object.keys(nodeType));
+        
+        const linkColorScale = d3.scaleOrdinal(d3.schemeCategory10)
+            .domain(Object.keys(edgeType));
+
+        // 绘制颜色比例尺
+        const nodeColorLegend = svg.selectAll("#nodeColorLegend")
+            .data(Object.keys(nodeType))
+            .enter()
+            .append("g")
+            .attr("id", "nodeColorLegend")
+            .attr("transform", (d, i) => `translate(0, ${i * 20})`);
+
+        nodeColorLegend.append("rect")
+            .attr("x", 10)
+            .attr("y", 5)
+            .attr("width", 10)
+            .attr("height", 10)
+            .style("fill", d => nodeColorScale(d));
+
+        nodeColorLegend.append("text")
+            .attr("x", 25)
+            .attr("y", 10)
+            .text(d => d);
+        
+        const linkColorLegend = svg.selectAll("#linkColorLegend")
+            .data(Object.keys(edgeType))
+            .enter()
+            .append("g")
+            .attr("id", "linkColorLegend")
+            .attr("transform", (d, i) => `translate(200, ${i * 20})`);
+
+        linkColorLegend.append("rect")
+            .attr("x", 10)
+            .attr("y", 5)
+            .attr("width", 10)
+            .attr("height", 10)
+            .style("fill", d => linkColorScale(d));
+
+        linkColorLegend.append("text")
+            .attr("x", 25)
+            .attr("y", 10)
+            .text(d => d);
         
         //新建一个力导向图，固定语句
         forceSimulation = d3.forceSimulation()
@@ -148,7 +192,7 @@ var render = function(){
             .append("line")
             .attr("stroke",function(d,i)
             {
-                return colorScale(i);  //这里决定了边的颜色
+                return linkColorScale(d.edge_type);  //这里决定了边的颜色
             })
             .attr("stroke-width",1);   //边的粗细
         
@@ -184,10 +228,10 @@ var render = function(){
 
         //绘制节点
         gs.append("circle")
-            .attr("r",10)   //每个顶点的大小
+            .attr("r", d=>d.degree)   //每个顶点的大小
             .attr("fill",function(d,i)
             {
-                return d3.rgb(d.name);  //颜色
+                return nodeColorScale(d.node_type);  //颜色
             })
 
         //顶点上的文字
@@ -254,7 +298,7 @@ function started(d)
 {
     if(!d3.event.active)
     {
-        forceSimulation.alphaTarget(0.8).restart();
+        forceSimulation.alphaTarget(0.3).restart();
     }
     d.fx = d.x;
     d.fy = d.y;
