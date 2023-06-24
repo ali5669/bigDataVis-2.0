@@ -1,4 +1,4 @@
-	
+
 var margin = {top:60,bottom:60,left:60,right:60}
 var svg = d3.select("#graph")    //获取画布
 var width = svg.attr("width")  //画布的宽
@@ -85,11 +85,13 @@ addOption2ComboBox("data");
 addOption2ComboBox("8327");
 addOption2ComboBox("Mar de la Vida OJSC");
 
-
 // 绘制
 var render = function(){
     svg.selectAll("*").remove();//直接jquery的remove()就行
-    var g = svg.append("g").attr("transform","translate("+margin.top+","+margin.left+")");
+    var g = svg.append("g")
+        .attr("class", "container")
+        .attr("transform","translate("+margin.top+","+margin.left+")");
+    
     d3.json("./data/" + fileName +"_cleaned.json").then(data=>{
         //结点数据
         var nodes = data.nodes;
@@ -214,6 +216,13 @@ var render = function(){
                         .attr('fill','#000000');//箭头颜色
 
     });
+
+    svg.call(d3.zoom()
+        .scaleExtent([0.1,3])
+        .on("zoom", zoomed));
+    function zoomed() {
+        d3.selectAll(".container").attr("transform", d3.event.transform);
+    }
 }
 render();
 
