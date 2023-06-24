@@ -20,31 +20,31 @@ input[type = range]{
 }
 
 #top {
-grid-area: top;
+grid-area: 1/1;
 background-color: #f8f9fa;
-padding: 10%;
+padding: 10px;
 }
 
 #left {
-grid-area: left;
+grid-area: 1/2;
 background-color: #f8f9fa;
 padding: 10px;
 }
 
 #content {
-grid-area: content;
+grid-area: 2/2;
 background-color: #ffffff;
 padding: 10px;
 }
 
 #right {
-grid-area: right;
+grid-area: 2/3;
 background-color: #f8f9fa;
 padding: 10px;
 }
 
 #bottom {
-grid-area: bottom;
+grid-area: 3/1;
 background-color: #f8f9fa;
 padding: 10px;
 }
@@ -56,9 +56,9 @@ position: relative;
 z-index: 1;
 }
 
-.row{
+/* .row{
     display: inline-block;
-}
+} */
 
 #tab-container {
     display: flex;
@@ -75,3 +75,17 @@ z-index: 1;
     text-align: center;
 }
 
+.my-table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+.my-table th, .my-table td {
+border: 1px solid black;
+padding: 8px;
+}
+
+.my-table th {
+background-color: #f2f2f2;
+}
+  
