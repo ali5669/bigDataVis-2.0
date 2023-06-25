@@ -32,10 +32,11 @@ var datas = new Array();
 let nodeSizeScale;
 
 // 力调整滑块
-d3.select("#right").append("p")
+var force_container = d3.select("#right").append("div");
+force_container.append("p")
     .text("ownership_force");
     
-d3.select("#right").append("input")
+force_container.append("input")
     .attr("type", "range")
     .attr("min", 0.0)
     .attr("max", 2.0)
@@ -43,10 +44,10 @@ d3.select("#right").append("input")
     .attr("value", ownership_force)
     .on("mouseup", function() { ownership_force = this.value; updateGraph(); renderGraph();});
 
-d3.select("#right").append("p")
+force_container.append("p")
     .text("partnership_force");
 
-d3.select("#right").append("input")
+force_container.append("input")
     .attr("type", "range")
     .attr("min", 0.0)
     .attr("max", 2.0)
@@ -54,10 +55,10 @@ d3.select("#right").append("input")
     .attr("value", partnership_force)
     .on("mouseup", function() { partnership_force = this.value; updateGraph(); renderGraph();});
 
-d3.select("#right").append("p")
+force_container.append("p")
     .text("family_relationship_force");
 
-d3.select("#right").append("input")
+force_container.append("input")
     .attr("type", "range")
     .attr("min", 0.0)
     .attr("max", 2.0)
@@ -65,10 +66,10 @@ d3.select("#right").append("input")
     .attr("value", family_relationship_force)
     .on("mouseup", function() { family_relationship_force = this.value; updateGraph(); renderGraph();});
 
-d3.select("#right").append("p")
+force_container.append("p")
     .text("membership_force");
 
-d3.select("#right").append("input")
+force_container.append("input")
     .attr("type", "range")
     .attr("min", 0.0)
     .attr("max", 2.0)
@@ -78,11 +79,13 @@ d3.select("#right").append("input")
 
 
 // 图像切换下拉单
-d3.select("#right").append("p")
+
+var graph_change_container = d3.select("#right").append("div");
+graph_change_container.append("p")
     .text("图像选择:");
 var fileName = "979893388";
 
-d3.select("#right").append("select")
+graph_change_container.append("select")
     .on("change", function(){
         fileName = d3.select(this).property("value");
         console.log(fileName);
@@ -91,7 +94,7 @@ d3.select("#right").append("select")
     })
 
 function addOption2ComboBox(d){
-    d3.select("#right").select("select")
+    graph_change_container.select("select")
         .append("option")
             .attr("value", d)
             .text(d)
@@ -101,7 +104,7 @@ function updateComboBox(){
     for(var key in datas){
         graph_names.push(key)
     }
-    d3.select("#right").selectAll("option").remove();
+    graph_change_container.selectAll("option").remove();
     graph_names.forEach(graph_name => {
         addOption2ComboBox(graph_name);
     });
@@ -111,9 +114,10 @@ addOption2ComboBox("8327_cleaned");
 addOption2ComboBox("Mar de la Vida OJSC_cleaned");
 
 // 国家模式
-d3.select("#right").append("p");
+var country_mode_container = d3.select("#right").append("div");
+country_mode_container.append("p");
 
-d3.select("#right").append("input")
+country_mode_container.append("input")
     .attr("type", "checkbox")
     .on("change", function(){
         country_flag = !country_flag;
@@ -122,11 +126,13 @@ d3.select("#right").append("input")
         renderGraph();
     })
 
-d3.select("#right").append("label")
+country_mode_container.append("label")
     .text("国家模式");
 
+
 // 生成聚类按钮
-d3.select("#right").append("input")
+var cluster_mode_container = d3.select("#right").append("div");
+cluster_mode_container.append("input")
     .attr("type", "button")
     .attr("value", "生成聚类")
     .on("click", function(){
@@ -136,10 +142,13 @@ d3.select("#right").append("input")
         activeNode = null;
     })
 
-var keyData = ["node_type", "id", "country", "degree", "x", "y"]
+cluster_mode_container.append("select");
 
 //右侧节点监视器
-var table = d3.select("#right").append("table")
+var node_monitor_container = d3.select("#center").append("div");
+var keyData = ["node_type", "id", "country", "degree", "x", "y"]
+
+var table = node_monitor_container.append("table")
     .attr("class", "mytable")
 //表头
 var thead = table.append("thead");
@@ -168,7 +177,8 @@ function updateTable(){
 }
 
 // 生成子图按钮
-d3.select("#right").append("input")
+var sub_graph_container = d3.select("#right").append("div");
+sub_graph_container.append("input")
     .attr("type", "button")
     .attr("value", "生成子图")
     .on("click", function(){
@@ -177,6 +187,8 @@ d3.select("#right").append("input")
         datas[fileName + "_sub_" + activeNode.id] = data_out;
         updateComboBox();
     })
+
+sub_graph_container.append("select");
 
 // 重置图
 var resetGraph = function(){
