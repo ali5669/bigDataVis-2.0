@@ -1,4 +1,3 @@
-
 var margin = {top:60,bottom:60,left:60,right:60}
 var svg = d3.select("#graph")    //获取画布
 var width = svg.attr("width")  //画布的宽
@@ -13,6 +12,8 @@ var family_relationship_force = 1;
 var membership_force = 1;
 var country_force = 1;
 
+var curGraph;
+
 var country_flag = false;
 
 let links;
@@ -20,12 +21,17 @@ let linksText;
 let gs;
 let forceSimulation;
 
+let graph_names;
+
+var data;
+var datas = new Array();
+
 let nodeSizeScale;
 
 // 力调整滑块
 d3.select("#right").append("p")
     .text("ownership_force");
-
+    
 d3.select("#right").append("input")
     .attr("type", "range")
     .attr("min", 0.0)
@@ -77,7 +83,8 @@ d3.select("#right").append("select")
     .on("change", function(){
         fileName = d3.select(this).property("value");
         console.log(fileName);
-        render();
+        updateGraph();
+        render(fileName);
     })
 
 function addOption2ComboBox(d){
@@ -85,12 +92,21 @@ function addOption2ComboBox(d){
         .append("option")
             .attr("value", d)
             .text(d)
+    }
+function updateComboBox(){
+    graph_names = new Array();
+    for(var key in datas){
+        graph_names.push(key)
+    }
+    d3.select("#right").select("select").remove();
+    graph_names.forEach(graph_name => {
+        addOption2ComboBox(graph_name);
+    });
 }
 
-addOption2ComboBox("979893388");
-addOption2ComboBox("data");
-addOption2ComboBox("8327");
-addOption2ComboBox("Mar de la Vida OJSC");
+addOption2ComboBox("979893388_cleaned");
+addOption2ComboBox("8327_cleaned");
+addOption2ComboBox("Mar de la Vida OJSC_cleaned");
 
 // 国家模式
 d3.select("#right").append("p");
@@ -107,6 +123,14 @@ d3.select("#right").append("input")
 d3.select("#right").append("label")
     .text("国家模式");
 
+// 生成聚类按钮
+d3.select("#right").append("input")
+    .attr("type", "button")
+    .attr("value", "生成聚类")
+    .on("click", function(){
+        updateComboBox();
+        activeNode = null;
+    })
 
 var keyData = ["node_type", "id", "country", "degree", "x", "y"]
 
@@ -139,6 +163,15 @@ function updateTable(){
         .text(d=>activeNode[d]);
 }
 
+// 生成子图按钮
+d3.select("#right").append("input")
+    .attr("type", "button")
+    .attr("value", "生成子图")
+    .on("click", function(){
+        updateComboBox();
+    })
+
+// 重置图
 var resetGraph = function(){
     svg.selectAll("*").remove();
     data.nodes.forEach(function(d){
@@ -147,12 +180,12 @@ var resetGraph = function(){
     })
 }
 
+// 刷新图
 var updateGraph = function(){
     svg.selectAll("*").remove();
 }
 
-var data;
-
+// 绘制图
 var renderGraph = function(){
     var g = svg.append("g")
         .attr("class", "container")
@@ -171,11 +204,11 @@ var renderGraph = function(){
     //设置一个color的颜色比例尺，为了让不同的顶点呈现不同的颜色
     const nodeColorScale = d3.scaleOrdinal(d3.schemeCategory10)
         .domain(Object.keys(nodeType));
-    
+
     const linkColorScale = d3.scaleOrdinal()
         .domain(Object.keys(edgeType))
         .range(['orange', 'aqua', 'purple', 'blue']);
-
+    
     // 绘制颜色比例尺
     const nodeColorLegend = svg.selectAll("#nodeColorLegend")
         .data(Object.keys(nodeType))
@@ -221,38 +254,42 @@ var renderGraph = function(){
     nodeSizeScale = d3.scaleLinear()
         .domain([min, max])
         .range([5, 50])
-    
+
+    const forceScale = d3.scaleLinear()
+        .domain([0, 5])
+        .range([0, 1])
+
     //新建一个力导向图，固定语句
     forceSimulation = d3.forceSimulation()
-        .force("link",d3.forceLink().id(d=>d.id).strength(link=>{
-            var forceStd = 1/Math.min(link.source.degree, link.target.degree);
-            var linkForce = 0;
-            link.edge_type.forEach(element => {
-                switch(element){
-                    case 'ownership': 
-                        linkForce += ownership_force * forceStd;
-                        break;
-                    case 'partnership': 
-                        linkForce += partnership_force * forceStd;
-                        break;
-                    case 'family_relationship':
-                        linkForce += family_relationship_force * forceStd;
-                        break;
-                    case 'membership': 
-                        linkForce += membership_force * forceStd;
-                        break;
-                    default: 
-                        if(country_flag){
-                            linkForce += country_force * forceStd;
-                        }
-                        break;
-                }
-            });
-            return linkForce;
-        }))
-        .force("charge",d3.forceManyBody())
-        .force("collide",d3.forceCollide(d=>d.r * 2))
-        .force("center",d3.forceCenter(width/2, height/2));
+    .force("link",d3.forceLink().id(d=>d.id).strength(link=>{
+        var forceStd = 1/Math.min(link.source.degree, link.target.degree);
+        var linkForce = 0;
+        link.edge_type.forEach(element => {
+            switch(element){
+                case 'ownership': 
+                    linkForce += ownership_force * forceStd;
+                    break;
+                case 'partnership': 
+                    linkForce += partnership_force * forceStd;
+                    break;
+                case 'family_relationship':
+                    linkForce += family_relationship_force * forceStd;
+                    break;
+                case 'membership': 
+                    linkForce += membership_force * forceStd;
+                    break;
+                default: 
+                    if(country_flag){
+                        linkForce += country_force * forceStd;
+                    }
+                    break;
+            }
+        });
+        return forceScale(linkForce);
+    }))
+    .force("charge",d3.forceManyBody())
+    .force("collide",d3.forceCollide(d=>d.r * 2))
+    .force("center",d3.forceCenter(width/2, height/2));
 
     //初始化力导向图，也就是传入数据
     //生成节点数据
@@ -357,7 +394,7 @@ var renderGraph = function(){
         {
             return d.id;
         })
-    
+
     //有向图的边是用带箭头的线来表示。如果是无向图，不需要这段代码
     var marker=	svg.append("marker")
         .attr("id", "resolved")
@@ -372,7 +409,7 @@ var renderGraph = function(){
         .append("path")
         .attr("d", "M0,-5L10,0L0,5")//箭头的路径
         .attr('fill','#000000');//箭头颜色
-    
+
     if(!country_flag){
         hiddenCountryNode();
     }else{
@@ -380,6 +417,7 @@ var renderGraph = function(){
     }
 }
 
+// 将国家节点隐藏
 var hiddenCountryNode = function(){
     gs.selectAll("circle")
         .filter(function(d){
@@ -391,20 +429,21 @@ var hiddenCountryNode = function(){
             return d.id.indexOf("@") != -1
         })
         .style("opacity", 0);
-    d3.selectAll("line")
+    d3.select("#left").selectAll("line")
         .filter(function(d){
             return d.source.id.indexOf("@") != -1 || d.target.id.indexOf("@") != -1;
         })
         .style("opacity", 0);
 }
 
+// 将国家节点可视
 var visibleCountryNode = function(){
     gs.selectAll("circle")
         .filter(function(d){
             return d.id.indexOf("@") != -1
         })
         .style("opacity", 0.3);
-    d3.selectAll("line")
+    d3.select("#left").selectAll("line")
         .filter(function(d){
             return d.source.id.indexOf("@") != -1 || d.target.id.indexOf("@") != -1;
         })
@@ -412,13 +451,21 @@ var visibleCountryNode = function(){
 }
 
 // 绘制
-var render = function(){
-    d3.json("./data/" + fileName +"_cleaned.json").then(graph=>{
-        data = graph;
-        console.log(data);
+var render = function(fileName){
+    if(!datas[fileName]){
+        d3.json("./data/" + fileName + ".json").then(graph=>{
+            datas[fileName] = graph;
+            data = graph;
+            renderGraph();
+            render_cartograms(data);
+            addOption2ComboBox(fileName);
+        })
+    }else{
+        data = datas[fileName];
         renderGraph();
-    });
-    
+        render_cartograms(data);
+    }
+    console.log(datas);
 
     svg.call(d3.zoom()
         .scaleExtent([0.1,3])
@@ -427,8 +474,17 @@ var render = function(){
         d3.selectAll(".container").attr("transform", d3.event.transform);
     }
 }
-render();
+render("979893388_cleaned");
+addData("8327_cleaned");
+addData("Mar de la Vida OJSC_cleaned");
 
+function addData(fileName){
+    if(!datas[fileName]){
+        d3.json("./data/" + fileName + ".json").then(graph=>{
+            datas[fileName] = graph;
+        })
+    }
+}
 
 function ticked()
 {
@@ -465,15 +521,6 @@ function started(d)
     activeNode = d;
 
     updateTable();
-
-    activeCircle = svg.append("circle")
-        .attr("id", "active")
-        .attr("r", nodeSizeScale(d.degree) + 2)
-        .attr("stroke-width", 1)
-        .attr("stroke", "aqua")
-        .attr("fill", "none")
-        .attr("transform", "translate(" + d.x + "," + d.y + ")")
-        
 }
 
 function dragged(d)
