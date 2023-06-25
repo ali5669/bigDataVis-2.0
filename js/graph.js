@@ -1,3 +1,6 @@
+import {render_cartograms} from "./statistics.js"
+import {render_sub_graph} from "./sub_graph.js"
+
 var margin = {top:60,bottom:60,left:60,right:60}
 var svg = d3.select("#graph")    //获取画布
 var width = svg.attr("width")  //画布的宽
@@ -98,13 +101,12 @@ function updateComboBox(){
     for(var key in datas){
         graph_names.push(key)
     }
-    d3.select("#right").select("select").remove();
+    d3.select("#right").selectAll("option").remove();
     graph_names.forEach(graph_name => {
         addOption2ComboBox(graph_name);
     });
 }
 
-addOption2ComboBox("979893388_cleaned");
 addOption2ComboBox("8327_cleaned");
 addOption2ComboBox("Mar de la Vida OJSC_cleaned");
 
@@ -128,6 +130,8 @@ d3.select("#right").append("input")
     .attr("type", "button")
     .attr("value", "生成聚类")
     .on("click", function(){
+        var data_out = render_sub_graph(data, null);
+        datas[fileName + "_cluster"] = data_out;
         updateComboBox();
         activeNode = null;
     })
@@ -288,7 +292,7 @@ var renderGraph = function(){
         return forceScale(linkForce);
     }))
     .force("charge",d3.forceManyBody())
-    .force("collide",d3.forceCollide(d=>d.r * 2))
+    // .force("collide",d3.forceCollide(d=>d.r * 2))
     .force("center",d3.forceCenter(width/2, height/2));
 
     //初始化力导向图，也就是传入数据
@@ -322,6 +326,7 @@ var renderGraph = function(){
         .selectAll("line")   //选择所有"line"元素
         .data(edges)   //将edges绑定上
         .enter()
+        .filter(d=>country_flag || d.source.id.indexOf("@") == -1)
         .append("line")
         .attr("stroke",function(d,i)
         {
@@ -365,6 +370,7 @@ var renderGraph = function(){
     gs = g.selectAll(".circleText")
         .data(nodes)
         .enter()
+        .filter(d=>country_flag || d.id.indexOf("@") == -1)
         .append("g")
         .attr("transform",function(d,i){
             var cirX = d.x;
@@ -395,6 +401,46 @@ var renderGraph = function(){
             return d.id;
         })
 
+    var connectNode = [];
+    gs.on('mouseenter', (d) => {
+        d3.select("#left").selectAll("line")
+            .filter(dline=>{
+                // console.log(dline);
+                
+                if(dline.source.id == d.id) connectNode.push(dline.target.id);
+                else if(dline.target.id == d.id) connectNode.push(dline.source.id);
+                return dline.source.id == d.id || dline.target.id == d.id
+            })
+            .transition()
+            .duration(100)
+            .style("stroke-opacity", "0.8")
+            .call(function(dline){
+                console.log(dline);
+                
+            })
+        connectNode.push(d.id);
+        // console.log(connectNode);
+        d3.select("#left").selectAll("circle")
+            .filter(dnode=>!connectNode.includes(dnode.id))
+            .transition()
+            .duration(100)
+            .style("opacity", "0.2")
+        
+    })
+    .on('mouseleave', (d) => {
+        d3.select("#left").selectAll("line")
+            .filter(dline=>dline.source.id == d.id || dline.target.id == d.id)
+            .transition()
+            .duration(100)
+            .style("stroke-opacity", "0.2")
+        d3.select("#left").selectAll("circle")
+            .filter(dnode=>!connectNode.includes(dnode.id))
+            .transition()
+            .duration(100)
+            .style("opacity", "1")
+        connectNode = new Array();
+    });
+
     //有向图的边是用带箭头的线来表示。如果是无向图，不需要这段代码
     var marker=	svg.append("marker")
         .attr("id", "resolved")
@@ -410,45 +456,45 @@ var renderGraph = function(){
         .attr("d", "M0,-5L10,0L0,5")//箭头的路径
         .attr('fill','#000000');//箭头颜色
 
-    if(!country_flag){
-        hiddenCountryNode();
-    }else{
-        visibleCountryNode();
-    }
+    // if(!country_flag){
+    //     hiddenCountryNode();
+    // }else{
+    //     visibleCountryNode();
+    // }
 }
 
-// 将国家节点隐藏
-var hiddenCountryNode = function(){
-    gs.selectAll("circle")
-        .filter(function(d){
-            return d.id.indexOf("@") != -1
-        })
-        .style("opacity", 0);
-    gs.selectAll("text")
-        .filter(function(d){
-            return d.id.indexOf("@") != -1
-        })
-        .style("opacity", 0);
-    d3.select("#left").selectAll("line")
-        .filter(function(d){
-            return d.source.id.indexOf("@") != -1 || d.target.id.indexOf("@") != -1;
-        })
-        .style("opacity", 0);
-}
+// // 将国家节点隐藏
+// var hiddenCountryNode = function(){
+//     gs.selectAll("circle")
+//         .filter(function(d){
+//             return d.id.indexOf("@") != -1
+//         })
+//         .style("opacity", 0);
+//     gs.selectAll("text")
+//         .filter(function(d){
+//             return d.id.indexOf("@") != -1
+//         })
+//         .style("opacity", 0);
+//     d3.select("#left").selectAll("line")
+//         .filter(function(d){
+//             return d.source.id.indexOf("@") != -1 || d.target.id.indexOf("@") != -1;
+//         })
+//         .style("opacity", 0);
+// }
 
-// 将国家节点可视
-var visibleCountryNode = function(){
-    gs.selectAll("circle")
-        .filter(function(d){
-            return d.id.indexOf("@") != -1
-        })
-        .style("opacity", 0.3);
-    d3.select("#left").selectAll("line")
-        .filter(function(d){
-            return d.source.id.indexOf("@") != -1 || d.target.id.indexOf("@") != -1;
-        })
-        .style("opacity", 0);
-}
+// // 将国家节点可视
+// var visibleCountryNode = function(){
+//     gs.selectAll("circle")
+//         .filter(function(d){
+//             return d.id.indexOf("@") != -1
+//         })
+//         .style("opacity", 0.3);
+//     d3.select("#left").selectAll("line")
+//         .filter(function(d){
+//             return d.source.id.indexOf("@") != -1 || d.target.id.indexOf("@") != -1;
+//         })
+//         .style("opacity", 0);
+// }
 
 // 绘制
 var render = function(fileName){
@@ -458,6 +504,8 @@ var render = function(fileName){
             data = graph;
             renderGraph();
             render_cartograms(data);
+            
+
             addOption2ComboBox(fileName);
         })
     }else{

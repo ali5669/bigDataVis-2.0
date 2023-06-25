@@ -37,8 +37,6 @@ var render_piechart = function(data_dict, position) {
     pie_data.forEach(function(d) {
         d.duration = duration * ((d.endAngle - d.startAngle) / (Math.PI * 2));
         d.delaytime = duration * ((d.startAngle) / (Math.PI * 2));
-        // d._endAngle = d.endAngle;
-        // d.endAngle = 0;
     })
     // console.log(pie_data)
 
@@ -106,7 +104,7 @@ var render_piechart = function(data_dict, position) {
 
 var render_barchart = function(data_dict, position) {
 
-    // delete data_dict[null];
+    delete data_dict[null];
     // 设置SVG容器的宽度和高度
     var containerWidth = cartogramSizes.width - 60;
     var containerHeight = cartogramSizes.height - 20;
@@ -170,35 +168,6 @@ var render_barchart = function(data_dict, position) {
         .attr("y", d => yScale(d[1]))
         .attr("fill", d => colorScale(d[0]));
 
-    // bars.on('mouseon', (d) => {
-    //     console.log(d)
-    //     d3.select("#" + names[d.index] + "_" + position + "_chordchart_gpath")
-    //         .transition()
-    //         .duration(100)
-    //         .attr("d", d3.arc()
-    //             .innerRadius(innerRadius)
-    //             .outerRadius(outerRadius + 20)
-    //         );
-    //     tooltip.html('Country:' + names[d.index] + "<br/>" + 'Amount:' + d.value)
-    //         .style("left", (d3.event.pageX)+"px")
-    //         .style("top", (d3.event.pageY+20)+"px")
-    //         .style("opacity", 1.0);
-    // })
-    // .on('mousemove', (d) => {
-    //     tooltip
-    //         .style('left', `${event.pageX + 40}px`)
-    //         .style('top', `${event.pageY - 40}px`)
-    //         .style('position', 'absolute');
-    
-    // })
-    // .on('mouseleave', (d) => {
-    //     d3.select("#" + names[d.index] + "_" + position + "_chordchart_gpath")
-    //         .transition()
-    //         .duration(100)
-    //         .attr("d", arc);
-    //     tooltip
-    //         .style('opacity', 0);
-    // });
 }
 
 var render_chordchart = function (matrix, names, position) {
@@ -228,7 +197,7 @@ var render_chordchart = function (matrix, names, position) {
         d.duration = duration * ((d.endAngle - d.startAngle) / (Math.PI * 2));
         d.delaytime = duration * ((d.startAngle) / (Math.PI * 2));
     });
-    console.log(chords);
+    // console.log(chords);
 
     // 创建弧生成器
     var arc = d3.arc()
@@ -276,11 +245,6 @@ var render_chordchart = function (matrix, names, position) {
                 return arc(d);
             }
         });
-
-    // group.append("text")
-    //     .attr("dy", -3)
-    //     .text(d => names[d.index])
-    //     .attr("startOffset", d => d.startAngle * outerRadius);
 
     group.on('mouseenter', (d) => {
             d3.select("#" + names[d.index] + "_" + position + "_chordchart_gpath")
@@ -351,7 +315,7 @@ var render_chordchart = function (matrix, names, position) {
     
 }
 
-var render_cartograms = function (data_graph) {
+export function render_cartograms (data_graph) {
 
     d3.select("#bottom")
         .selectAll("g")
@@ -361,11 +325,9 @@ var render_cartograms = function (data_graph) {
         .attr("width", 3600)
         .attr("height", 400);
 
-    var country_count = {}
-    for(var i = 0; i < data_graph.nodes.length; i ++){
-        if(country_count[data_graph.nodes[i].country]) country_count[data_graph.nodes[i].country] += 1;
-        else country_count[data_graph.nodes[i].country] = 1;
-    }
+    var country_count = data_graph.country_list;
+    var node_type_list = data_graph.node_type_list;
+    var edge_type_list = data_graph.edge_type_list;
 
     var idx2country = Object.keys(country_count);
     var country2idx = {};
@@ -381,7 +343,9 @@ var render_cartograms = function (data_graph) {
     });
 
     render_piechart(country_count, 0);
-    render_barchart(country_count, 1);
-    render_chordchart(flow_matrix, idx2country, 2);
+    render_chordchart(flow_matrix, idx2country, 1);
+    // render_barchart(country_count, 2);
+    render_piechart(node_type_list, 2);
+    render_piechart(edge_type_list, 3);
 
 }
