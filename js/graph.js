@@ -136,13 +136,25 @@ cluster_mode_container.append("input")
     .attr("type", "button")
     .attr("value", "生成聚类")
     .on("click", function(){
-        var data_out = render_sub_graph(data, null);
-        datas[fileName + "_cluster"] = data_out;
+        var data_out = render_sub_graph(data, null, method);
+        datas[fileName + "_" + method] = data_out;
         updateComboBox();
         activeNode = null;
     })
 
-cluster_mode_container.append("select");
+var method = "Louvain";
+cluster_mode_container.append("select")
+    .on("change", function(){
+        method = d3.select(this).property("value");
+        console.log(method);
+    })
+
+cluster_mode_container.select("select").append("option")
+    .attr("value", "Louvain").text("Louvain");
+cluster_mode_container.select("select").append("option")
+    .attr("value", "Spectral").text("Spectral");
+cluster_mode_container.select("select").append("option")
+    .attr("value", "Newman_Girvan").text("Newman_Girvan"); 
 
 //右侧节点监视器
 var node_monitor_container = d3.select("#center").append("div");

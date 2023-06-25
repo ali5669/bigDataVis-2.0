@@ -1,3 +1,7 @@
+import { get_spectral_cluster } from "./spectral_clustering.js";
+import { get_louvain_cluster } from "./louvain_clustering.js";
+import { get_newman_girvan_cluster } from "./newman_girvan_clustering.js";
+
 var graph;
 var hidden_nodes;
 var hidden_edges;
@@ -34,13 +38,7 @@ var get_edge_type_list = function (data_graph) {
     return edge_type_list;
 }
 
-var get_louvain_cluster = function (graph) {
-
-    var communities = graphologyLibrary.communitiesLouvain(graph);
-    return communities;
-}
-
-export function render_sub_graph (data_graph, node_id) {
+export function render_sub_graph (data_graph, node_id, method) {
     
     graph = new graphology.Graph();
     data_graph.nodes.forEach(function (d) {
@@ -60,8 +58,20 @@ export function render_sub_graph (data_graph, node_id) {
         edges:[],
         nodes:[]
     };
-    
-    var cluster_res = get_louvain_cluster(graph);
+
+    if (method == "Spectral") {
+        var cluster_res = get_spectral_cluster(graph);
+    }
+    else if (method == "Louvain") {
+        var cluster_res = get_louvain_cluster(graph);
+    }
+    else if (method == "Newman_Girvan") {
+        var cluster_res = get_newman_girvan_cluster(graph);
+    }
+    else {
+        console.log(method + "Not Implemented.")
+        return data_out;
+    }
     console.log("Cluster Result:", cluster_res);
 
     var cluster_labels = Object.entries(cluster_res).map(d => d[1]);
