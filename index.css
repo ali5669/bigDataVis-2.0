@@ -1,52 +1,30 @@
 svg{
-    margin-left: 5px;
-    margin-top: 5px;
+border:2px solid black ;
+background-color: aliceblue;
 }
 
-input[type = range]{
-    
-    width:20px;
+p{
+padding: 3px;
+border: 2px solid black;
+background-color: aliceblue;
 }
 
-#main-container {
-    height: 100vh;
-    display: grid;
-    grid-template-columns: 1fr 3fr 1fr;
-    grid-template-rows: 1fr 5fr 1fr;
-    grid-template-areas:
-      "top top top"
-      "sidebar content right"
-      "bottom bottom bottom";
+.row{
+overflow: auto;
 }
 
-#top {
-grid-area: 1/1;
-background-color: #f8f9fa;
+.block{
+border:2px solid black ;
+background-color: white;
 padding: 10px;
 }
 
-#left {
-grid-area: 1/2;
-background-color: #f8f9fa;
-padding: 10px;
+#left{
+float: left;
 }
 
-#content {
-grid-area: 2/2;
-background-color: #ffffff;
-padding: 10px;
-}
-
-#right {
-grid-area: 2/3;
-background-color: #f8f9fa;
-padding: 10px;
-}
-
-#bottom {
-grid-area: 3/1;
-background-color: #f8f9fa;
-padding: 10px;
+#right{
+float: left;
 }
 
 .draggable {
@@ -55,10 +33,6 @@ overflow: auto;
 position: relative;
 z-index: 1;
 }
-
-/* .row{
-    display: inline-block;
-} */
 
 #tab-container {
     display: flex;

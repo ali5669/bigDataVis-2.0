@@ -172,6 +172,9 @@ d3.select("#right").append("input")
     .attr("type", "button")
     .attr("value", "生成子图")
     .on("click", function(){
+        var data_out = render_sub_graph(data, activeNode.id);
+        // console.log(data_out);
+        datas[fileName + "_sub_" + activeNode.id] = data_out;
         updateComboBox();
     })
 
@@ -385,9 +388,17 @@ var renderGraph = function(){
 
     //绘制节点
     gs.append("circle")
-        .attr("r", d=>nodeSizeScale(d.degree))   //每个顶点的大小
+        .attr("r", d=>{
+            if(d.node_type == "hidden_node"){
+                return 100;
+            }
+            return nodeSizeScale(d.degree)
+        })   //每个顶点的大小
         .attr("fill",function(d,i)
         {
+            if(d.node_type == "hidden_node"){
+                return "rgba(255, 133, 81, 0.2)";
+            }
             return nodeColorScale(d.node_type);  //颜色
         })
 
@@ -400,6 +411,9 @@ var renderGraph = function(){
         {
             return d.id;
         })
+
+    gs.filter(d=>d.node_type == "hidden_node")
+        .style("pointer-events", "none");
 
     var connectNode = [];
     gs.on('mouseenter', (d) => {
@@ -414,10 +428,6 @@ var renderGraph = function(){
             .transition()
             .duration(100)
             .style("stroke-opacity", "0.8")
-            .call(function(dline){
-                console.log(dline);
-                
-            })
         connectNode.push(d.id);
         // console.log(connectNode);
         d3.select("#left").selectAll("circle")
@@ -534,6 +544,8 @@ function addData(fileName){
     }
 }
 
+var maxDistance;
+
 function ticked()
 {
     links
@@ -555,6 +567,15 @@ function ticked()
         });
 
     gs.attr("transform",function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+    // TODO:
+    // maxDistance = {};
+    // nodes.forEach
+    // gs.selectAll("circle")
+    //     .filter(d=>d.edge_type == "hidden_node")
+    //     .attr("r", function(d){
+
+    //     })
 }
 
 function started(d)

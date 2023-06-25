@@ -1,5 +1,5 @@
 var cartogramSizes = {
-    width:500,
+    width:400,
     height:400,
     pad:20
 }
@@ -322,7 +322,7 @@ export function render_cartograms (data_graph) {
         .remove();
         
     d3.select("#vis")
-        .attr("width", 3600)
+        .attr("width", 2000)
         .attr("height", 400);
 
     var country_count = data_graph.country_list;
