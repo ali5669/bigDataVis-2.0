@@ -4,7 +4,7 @@
 
 // Newman-Girvan算法的函数
 export function get_newman_girvan_cluster (graph) {
-    const communities = [];
+  const communities = [];
 
     while (graph.size > 0) {
       const { delta, labels } = getGraphLabels(graph);
@@ -15,10 +15,11 @@ export function get_newman_girvan_cluster (graph) {
   
       let maxDelta = -Infinity;
       let maxEdge;
-  
+      
+      graphologyLibrary.metrics.centrality.betweenness.assign(graph);
       // 遍历所有边，找到介数（betweenness）最大的边
-      graph.forEachEdge(edge => {
-        const { betweenness } = edge;
+      graph.forEachEdge(function (edge, attr, source, target) {
+        const betweenness = graph.getNodeAttribute(source, 'betweennessCentrality') + graph.getNodeAttribute(target, 'betweennessCentrality');
   
         if (betweenness > maxDelta) {
           maxDelta = betweenness;
@@ -26,21 +27,29 @@ export function get_newman_girvan_cluster (graph) {
         }
       });
       // 删除介数最大的边
-        if (maxEdge) {
-            graph.dropEdge(maxEdge);
-        
-            // 根据标签信息划分社区
-            const newCommunities = getCommunitiesFromLabels(labels);
-        
-            if (newCommunities.length >= communities.length) {
-                communities.push(newCommunities);
-            } else {
-                break; // 如果没有新社区生成，则退出循环
-            }
+      if (maxEdge) {
+        graph.dropEdge(maxEdge);
+    
+        // 根据标签信息划分社区
+        const newCommunities = getCommunitiesFromLabels(labels);
+    
+        if (newCommunities.length >= communities.length) {
+            communities.push(newCommunities);
+        } else {
+            break; // 如果没有新社区生成，则退出循环
         }
+      }
     }
-  
-    return communities;
+    
+    const communities_final = communities[Object.keys(communities).length - 1];
+    var communities_res = {};
+    for (let key in communities_final) {
+      console.log(key, communities_final[key]);
+      communities_final[key].forEach(function (d) {
+        communities_res[d] = key;
+      });
+    }
+    return communities_res;
   }
   
   // 获取图的标签信息

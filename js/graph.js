@@ -1,5 +1,6 @@
 import {render_cartograms} from "./statistics.js"
 import {render_sub_graph} from "./sub_graph.js"
+import {get_attr_value} from "./node_attr_value.js"
 
 var margin = {top:60,bottom:60,left:60,right:60}
 var svg = d3.select("#graph")    //获取画布
@@ -30,6 +31,7 @@ var data;
 var datas = new Array();
 
 let nodeSizeScale;
+let attrColorScale
 
 // 力调整滑块
 var force_container = d3.select("#right").append("div");
@@ -112,11 +114,26 @@ function updateComboBox(){
 
 addOption2ComboBox("8327_cleaned");
 addOption2ComboBox("Mar de la Vida OJSC_cleaned");
+addOption2ComboBox("data_cleaned");
 
-// 国家模式
+var stop_flag = false;
+var stop_mode_container = d3.select("#right").append("div");
+stop_mode_container.append("input")
+    .attr("type", "checkbox")
+    .on("change", function(){
+        stop_flag = !stop_flag;
+        if(stop_flag){
+            forceSimulation.stop();
+        }else{
+            forceSimulation.restart();
+        }
+        console.log(stop_flag);
+    })
+stop_mode_container.append("label")
+    .text("停止布局计算");
+
+//聚类模式
 var country_mode_container = d3.select("#right").append("div");
-country_mode_container.append("p");
-
 country_mode_container.append("input")
     .attr("type", "checkbox")
     .on("change", function(){
@@ -125,28 +142,28 @@ country_mode_container.append("input")
         resetGraph();
         renderGraph();
     })
-
 country_mode_container.append("label")
-    .text("国家模式");
+    .text("聚类模式");
 
 
-// 生成聚类按钮
+//生成聚类按钮
 var cluster_mode_container = d3.select("#right").append("div");
 cluster_mode_container.append("input")
     .attr("type", "button")
     .attr("value", "生成聚类")
     .on("click", function(){
-        var data_out = render_sub_graph(data, null, method);
-        datas[fileName + "_" + method] = data_out;
+        var data_out = render_sub_graph(data, null, cluster_method);
+        datas[fileName + "_cluster(" + cluster_method + ")"] = data_out;
         updateComboBox();
         activeNode = null;
     })
 
-var method = "Louvain";
+//聚类算法下拉单
+var cluster_method = "Louvain";
 cluster_mode_container.append("select")
     .on("change", function(){
-        method = d3.select(this).property("value");
-        console.log(method);
+        cluster_method = d3.select(this).property("value");
+        console.log(cluster_method);
     })
 
 cluster_mode_container.select("select").append("option")
@@ -156,7 +173,28 @@ cluster_mode_container.select("select").append("option")
 cluster_mode_container.select("select").append("option")
     .attr("value", "Newman_Girvan").text("Newman_Girvan"); 
 
-//右侧节点监视器
+//中间节点监视器
+var search_node_id;
+var node_search_container = d3.select("#center").append("div");
+var node_search_input = node_search_container.append("input")
+    .attr("type", "text")
+    .attr("placeholder", "输入节点ID")
+    .on("input", function(){
+        search_node_id = this.value
+    });
+var node_search_btn = node_search_container.append("button")
+    .attr("id", "node_search_btn")
+    .text("标记节点")
+    .on("click", function(){
+        data.nodes.forEach(node => {
+            if(node.id == search_node_id){
+                activeNode = node;
+                updateTable();
+            }
+        });
+    });
+
+
 var node_monitor_container = d3.select("#center").append("div");
 var keyData = ["node_type", "id", "country", "degree", "x", "y"]
 
@@ -188,19 +226,76 @@ function updateTable(){
         .text(d=>activeNode[d]);
 }
 
-// 生成子图按钮
+//生成子图按钮
 var sub_graph_container = d3.select("#right").append("div");
 sub_graph_container.append("input")
     .attr("type", "button")
     .attr("value", "生成子图")
     .on("click", function(){
-        var data_out = render_sub_graph(data, activeNode.id);
+        var data_out = render_sub_graph(data, activeNode.id, sub_method);
         // console.log(data_out);
-        datas[fileName + "_sub_" + activeNode.id] = data_out;
+        datas[fileName + "_sub_" + activeNode.id + "(" + sub_method + ")"] = data_out;
         updateComboBox();
     })
+// 子图下拉单
+var sub_method = "Louvain";
+sub_graph_container.append("select")
+    .on("change", function(){
+        sub_method = d3.select(this).property("value");
+        console.log(sub_method);
+    });
+sub_graph_container.select("select").append("option")
+    .attr("value", "Louvain").text("Louvain");
+sub_graph_container.select("select").append("option")
+    .attr("value", "Spectral").text("Spectral");
+sub_graph_container.select("select").append("option")
+    .attr("value", "Newman_Girvan").text("Newman_Girvan"); 
 
-sub_graph_container.append("select");
+//颜色模式
+var color_mode_container = d3.select("#right").append("div");
+var color_mode = "node_type";
+var credibility_flag = false;
+color_mode_container.append("select")
+    .on("change", function(){
+        color_mode = d3.select(this).property("value");
+        if(color_mode == "Credibility_ShortestPath"){
+            credibility_flag = true;
+        }else{
+            credibility_flag = false;
+        }
+        console.log(color_mode);
+        data = get_attr_value(data, color_mode);
+        console.log(data);
+        resetGraph();
+        renderGraph();
+        // TODO:
+        // 在color—mode改变时，
+        // 对所有节点selectAll，
+        // 更改其attr的fill
+
+    })
+color_mode_container.select("select").append("option")
+    .attr("value", "node_type").text("节点类型");
+color_mode_container.select("select").append("option")
+    .attr("value", "Weighted_Degree").text("Weighted_Degree");
+// color_mode_container.select("select").append("option")
+//     .attr("value", "Eccentricity").text("Eccentricity");
+color_mode_container.select("select").append("option")
+    .attr("value", "Credibility_ShortestPath").text("Credibility_ShortestPath");
+color_mode_container.select("select").append("option")
+    .attr("value", "Betweenness_Centrality").text("Betweenness_Centrality");
+color_mode_container.select("select").append("option")
+    .attr("value", "Closeness_Centrality").text("Closeness_Centrality");
+color_mode_container.select("select").append("option")
+    .attr("value", "Degree_Centrality").text("Degree_Centrality");
+color_mode_container.select("select").append("option")
+    .attr("value", "Eigenvector_Centrality").text("Eigenvector_Centrality");
+color_mode_container.select("select").append("option")
+    .attr("value", "HITS_Authority").text("HITS_Authority");
+color_mode_container.select("select").append("option")
+    .attr("value", "HITS_Hub").text("HITS_Hub");
+color_mode_container.select("select").append("option")
+    .attr("value", "PageRank").text("PageRank");
 
 // 重置图
 var resetGraph = function(){
@@ -279,6 +374,39 @@ var renderGraph = function(){
         .attr("y", 10)
         .text(d => d);
 
+    // // 创建一个用于绘制比例尺的轴
+    // var colorAxisScale = d3.scaleLinear()
+    //     .domain(attr_domin)
+    //     .range([0, 100]); // 比例尺的宽度
+    // var axis = d3.axisBottom(colorAxisScale)
+    //     .ticks(5) // 指定刻度数量
+    //     .tickFormat(d3.format('.1f')); // 格式化刻度的显示格式
+    // // 绘制比例尺轴线
+    // svg.append('g')
+    //     .attr('class', 'axis')
+    //     .attr('transform', 'translate(10, 200)')
+    //     .call(axis);
+    // // 绘制比例尺的颜色条
+    // var attrColorGradient = svg.append("defs")
+    //     .append('linearGradient')
+    //     .attr('id', 'attr-color-gradient')
+    //     .attr('x1', '0%')
+    //     .attr('y1', '0%')
+    //     .attr('x2', '100%')
+    //     .attr('y2', '0%');
+    // attrColorGradient.append('stop')
+    //     .attr('offset', '0%')
+    //     .attr('stop-color', color_range[0]);
+    // attrColorGradient.append('stop')
+    //     .attr('offset', '100%')
+    //     .attr('stop-color', color_range[1]);
+    // svg.append('rect')
+    //     .attr('x', 10)
+    //     .attr('y', 210)
+    //     .attr('width', 100)
+    //     .attr('height', 20)
+    //     .style('fill', 'url(#attr-color-gradient)');
+
     //大小比例尺
     var max = Math.max.apply(Math, nodes.map(obj=>obj.degree));
     var min = Math.min.apply(Math, nodes.map(obj=>obj.degree));
@@ -289,6 +417,20 @@ var renderGraph = function(){
     const forceScale = d3.scaleLinear()
         .domain([0, 5])
         .range([0, 1])
+
+    // node.attr_value节点颜色比例尺
+    var max = Math.max.apply(Math, nodes.map(obj=>obj.attr_value).filter(item=>item != undefined));
+    var min = Math.min.apply(Math, nodes.map(obj=>obj.attr_value).filter(item=>item != undefined));
+    if(credibility_flag){
+        max = Math.max.apply(Math, nodes.map(obj=>obj.credibility_value).filter(item=>item != undefined));
+        min = Math.min.apply(Math, nodes.map(obj=>obj.credibility_value).filter(item=>item != undefined));
+    }
+    console.log(max);
+    console.log(min);
+    attrColorScale = d3.scaleLinear()
+        .domain([min, max])
+        .range([0, 1]);
+    const attrColorInterpolate = d3.interpolateRgb("blue", "red");
 
     //新建一个力导向图，固定语句
     forceSimulation = d3.forceSimulation()
@@ -412,18 +554,26 @@ var renderGraph = function(){
 
     //绘制节点
     gs.append("circle")
-        .attr("r", d=>{
+        .attr("r", d=>{//每个顶点的大小
             if(d.node_type == "hidden_node"){
                 return 100;
             }
             return nodeSizeScale(d.degree)
-        })   //每个顶点的大小
-        .attr("fill",function(d,i)
-        {
+        })   
+        .attr("fill",function(d,i){//颜色
             if(d.node_type == "hidden_node"){
                 return "rgba(255, 133, 81, 0.2)";
             }
-            return nodeColorScale(d.node_type);  //颜色
+            if(color_mode == "node_type"){
+                return nodeColorScale(d.node_type);  
+            }
+            // var i = attrColorScale(d.attr_value)
+            // console.log(i);
+            if(credibility_flag){
+                console.log(d.id, d.credibility_value);
+                return attrColorInterpolate(attrColorScale(d.credibility_value)) + "";
+            }
+            return attrColorInterpolate(attrColorScale(d.attr_value)) + "";
         })
 
     //顶点上的文字
@@ -435,6 +585,7 @@ var renderGraph = function(){
         {
             return d.id;
         })
+        .style("opacity", "0.8");
 
     gs.filter(d=>d.node_type == "hidden_node")
         .style("pointer-events", "none");
@@ -459,6 +610,11 @@ var renderGraph = function(){
             .transition()
             .duration(100)
             .style("opacity", "0.2")
+        gs.selectAll("text")
+            .filter(dnode=>!connectNode.includes(dnode.id))
+            .transition()
+            .duration(100)
+            .style("opacity", "0")
         
     })
     .on('mouseleave', (d) => {
@@ -467,11 +623,16 @@ var renderGraph = function(){
             .transition()
             .duration(100)
             .style("stroke-opacity", "0.2")
-        d3.select("#left").selectAll("circle")
+        gs.selectAll("circle")
             .filter(dnode=>!connectNode.includes(dnode.id))
             .transition()
             .duration(100)
             .style("opacity", "1")
+        gs.selectAll("text")
+            .filter(dnode=>!connectNode.includes(dnode.id))
+            .transition()
+            .duration(100)
+            .style("opacity", "0.8")
         connectNode = new Array();
     });
 
@@ -559,6 +720,7 @@ var render = function(fileName){
 render("979893388_cleaned");
 addData("8327_cleaned");
 addData("Mar de la Vida OJSC_cleaned");
+addData("data_cleaned");
 
 function addData(fileName){
     if(!datas[fileName]){
@@ -606,7 +768,9 @@ function started(d)
 {
     if(!d3.event.active)
     {
-        forceSimulation.alphaTarget(0.9).restart();
+        if(!stop_flag){
+            forceSimulation.alphaTarget(0.9).restart();
+        }
     }
     d.fx = d.x;
     d.fy = d.y;

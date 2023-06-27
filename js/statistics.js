@@ -1,5 +1,5 @@
 var cartogramSizes = {
-    width:400,
+    width:500,
     height:400,
     pad:20
 }
@@ -79,7 +79,7 @@ var render_piechart = function(data_dict, position) {
                     .innerRadius(innerRadius)
                     .outerRadius(outerRadius + 20)
                 );
-            tooltip.html('Country:' + d.data.key + "<br/>" + 'Amount:' + d.data.value)
+            tooltip.html('Class:' + d.data.key + "<br/>" + 'Amount:' + d.data.value)
                 .style("left", (d3.event.pageX)+"px")
                 .style("top", (d3.event.pageY+20)+"px")
                 .style("opacity", 1.0);
@@ -322,7 +322,7 @@ export function render_cartograms (data_graph) {
         .remove();
         
     d3.select("#vis")
-        .attr("width", 2000)
+        .attr("width", 3600)
         .attr("height", 400);
 
     var country_count = data_graph.country_list;

@@ -45,7 +45,9 @@ export function render_sub_graph (data_graph, node_id, method) {
         if (!graph.hasNode(d.id) && d.id.indexOf("@") == -1) graph.addNode(d.id);
     });
     data_graph.edges.forEach(function (d) {
-        if (d.source.id.indexOf("@") == -1) graph.addEdge(d.source.id, d.target.id);
+        if (d.source.id.indexOf("@") == -1) graph.addDirectedEdge(d.source.id, d.target.id, {
+            weight:d.weight
+        });
     });
     console.log(graph);
     console.log("n_node:", graph.order);
@@ -122,8 +124,19 @@ export function render_sub_graph (data_graph, node_id, method) {
     }
     else{
         var node_label = cluster_res[node_id];
+        var node_neighbors = new Array();
         data_graph.edges.forEach(function (d) {
-            if (d.edge_type != "hidden_edge" && cluster_res[d.source.id] == node_label && cluster_res[d.target.id] == node_label) {
+            if (d.source.id == node_id) {
+                node_neighbors.push(d.target.id);
+            }
+            else if (d.target.id == node_id) {
+                node_neighbors.push(d.source.id);
+            }
+        });
+        data_graph.edges.forEach(function (d) {
+            const source_in_cluster = node_neighbors.indexOf(d.source.id) != -1 || cluster_res[d.source.id] == node_label;
+            const target_in_cluster = node_neighbors.indexOf(d.target.id) != -1 || cluster_res[d.target.id] == node_label;
+            if (d.edge_type != "hidden_edge" && (target_in_cluster && source_in_cluster)) {
                 var edge_new = {
                     source:d.source.id,
                     target:d.target.id,
@@ -134,7 +147,7 @@ export function render_sub_graph (data_graph, node_id, method) {
             }
         });
         data_graph.nodes.forEach(function (d) {
-            if (d.node_type != "hidden_node" && cluster_res[d.id] == node_label) {
+            if (d.node_type != "hidden_node" && (cluster_res[d.id] == node_label || node_neighbors.indexOf(d.id) != -1)) {
                 data_out.nodes.push(d);
                 // console.log(d.country, d.country==null)
                 if (d.country != null) {
