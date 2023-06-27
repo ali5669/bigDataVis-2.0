@@ -6,6 +6,7 @@ var color_mode_container = d3.select("#right").append("div");
 var color_mode = "node_type";
 var credibility_flag = false;
 
+color_mode_container.append("p").text("节点颜色模式:")
 color_mode_container.append("select")
     .on("change", function(){
         color_mode = d3.select(this).property("value");
