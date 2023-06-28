@@ -52,18 +52,26 @@ var credibility_assign = function (graph) {
 export function get_attr_value (data_graph, attr_name) {
     
     var data_out;
-    graph = new graphology.MultiGraph();
+    const is_multi_graph = attr_name.slice(0, 4) == "HITS";
+    if (is_multi_graph) {
+        graph = new graphology.Graph();
+    }
+    else {
+        graph = new graphology.MultiGraph();
+    }
+    
     data_graph.nodes.forEach(function (d) {
         if (!graph.hasNode(d.id) && d.node_type != "hidden_node") graph.addNode(d.id);
     });
     data_graph.edges.forEach(function (d) {
-        if (d.source.node_type != "hidden_node") graph.addUndirectedEdge(d.source.id, d.target.id, {
-            weight:d.weight
-        });
+        if (d.source.node_type != "hidden_node") {
+            if (is_multi_graph && !graph.hasEdge(d.source.id, d.target.id)) {
+                graph.addUndirectedEdge(d.source.id, d.target.id, {
+                    weight:d.weight
+                });
+            }
+        }
     });
-    // console.log(graph);
-    // console.log("n_node:", graph.order);
-    // console.log("n_edge:", graph.size);
     
     if (attr_name == "Weighted_Degree") {
         data_graph.nodes.forEach(function (d) {

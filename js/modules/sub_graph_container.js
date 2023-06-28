@@ -29,4 +29,10 @@ sub_graph_container.select("select").append("option")
     .attr("value", "Spectral").text("Spectral");
 sub_graph_container.select("select").append("option")
     .attr("value", "Newman_Girvan").text("Newman_Girvan"); 
+sub_graph_container.select("select").append("option")
+    .attr("value", "1-Hop").text("1-Hop"); 
+sub_graph_container.select("select").append("option")
+    .attr("value", "2-Hop").text("2-Hop"); 
+sub_graph_container.select("select").append("option")
+    .attr("value", "3-Hop").text("3-Hop"); 
 

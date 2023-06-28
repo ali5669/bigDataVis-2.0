@@ -1,10 +1,9 @@
 import { get_spectral_cluster } from "./spectral_clustering.js";
 import { get_louvain_cluster } from "./louvain_clustering.js";
 import { get_newman_girvan_cluster } from "./newman_girvan_clustering.js";
+import { get_khop_cluster } from "./khop_clustering.js";
 
 var graph;
-var hidden_nodes;
-var hidden_edges;
 
 var get_country_list = function (data_graph) {
 
@@ -70,8 +69,11 @@ export function render_sub_graph (data_graph, node_id, method) {
     else if (method == "Newman_Girvan") {
         var cluster_res = get_newman_girvan_cluster(graph);
     }
+    else if (method.slice(-4) == "-Hop") {
+        var cluster_res = get_khop_cluster(graph, node_id, parseInt(method.slice(0, -4)))
+    }
     else {
-        console.log(method + "Not Implemented.")
+        console.log(method + " Not Implemented.")
         return data_out;
     }
     console.log("Cluster Result:", cluster_res);
