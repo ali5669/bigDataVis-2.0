@@ -1,5 +1,5 @@
 import {data, setData, resetGraph, renderGraph} from '../graph.js';
-import {get_attr_value} from '../algorithm/node_attr_value.js';
+import {get_attr_value} from '../modules_node_attr/node_attr_value.js';
 
 //颜色模式
 var color_mode_container = d3.select("#right").append("div");

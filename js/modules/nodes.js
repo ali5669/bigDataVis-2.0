@@ -1,5 +1,5 @@
 import { nodeSizeScale, nodeColorScale, attrColorScale, forceSimulation, setActiveNode} from "../graph.js";
-import { cluster_flag } from "./cluster_mode_container.js";
+import { cluster_flag } from "./cluster_generate_container.js";
 import { color_mode, credibility_flag } from "./color_mode_container.js";
 import { attrColorInterpolate } from "./scale.js";
 import { updateTable } from './node_search_container.js';
@@ -9,7 +9,7 @@ export var get_nodes = function(g, nodes){
     var gs = g.selectAll(".circleText")
         .data(nodes)
         .enter()
-        .filter(d=>cluster_flag || d.id.indexOf("@") == -1)
+        .filter(d=>cluster_flag || d.node_type != "hidden_node")
         .append("g")
         .attr("transform",function(d,i){
             var cirX = d.x;
@@ -24,16 +24,17 @@ export var get_nodes = function(g, nodes){
 
     //绘制节点
     gs.append("circle")
+        .filter(d=>d.node_type != "hidden_node")
         .attr("r", d=>{//每个顶点的大小
-            if(d.node_type == "hidden_node"){
-                return 100;
-            }
+            // if(d.node_type == "hidden_node"){
+            //     return 100;
+            // }
             return nodeSizeScale(d.degree)
         })   
         .attr("fill",function(d,i){//颜色
-            if(d.node_type == "hidden_node"){
-                return "rgba(255, 133, 81, 0.2)";
-            }
+            // if(d.node_type == "hidden_node"){
+            //     return "rgba(255, 133, 81, 0.2)";
+            // }
             if(color_mode == "node_type"){
                 return nodeColorScale(d.node_type);  
             }
@@ -47,6 +48,7 @@ export var get_nodes = function(g, nodes){
 
     //顶点上的文字
     gs.append("text")
+        .filter(d=>d.node_type != "hidden_node")
         .attr("x",-10)
         .attr("y",-20)
         .attr("dy",10)
@@ -72,7 +74,7 @@ export var get_nodes = function(g, nodes){
             .duration(100)
             .style("stroke-opacity", "0.8")
         connectNode.push(d.id);
-        d3.select("#left").selectAll("circle")
+        gs.selectAll("circle")
             .filter(dnode=>!connectNode.includes(dnode.id))
             .transition()
             .duration(100)

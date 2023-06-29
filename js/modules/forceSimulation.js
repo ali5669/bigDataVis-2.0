@@ -1,7 +1,8 @@
 import {ownership_force, partnership_force, family_relationship_force, membership_force, cluster_force} from './force_container.js';
-import {cluster_flag} from './cluster_mode_container.js';
+import {cluster_flag} from './cluster_generate_container.js';
 import {forceScale} from './scale.js';
 import {nodeSizeScale, width, height, links, linksText, gs} from '../graph.js';
+import { update_cluster_circles } from './cluster_circle.js';
 
 export var gen_force_simulation = function(nodes, edges){
     //新建一个力导向图，固定语句
@@ -83,13 +84,10 @@ function ticked()
         });
 
     gs.attr("transform",function(d) { return "translate(" + d.x + "," + d.y + ")"; });
-
-    // TODO:
-    // maxDistance = {};
-    // nodes.forEach
-    // gs.selectAll("circle")
-    //     .filter(d=>d.edge_type == "hidden_node")
-    //     .attr("r", function(d){
-
-    //     })
+    
+    if (cluster_flag) {
+        // TODO: 给cluster——circle绑定更新语句
+        update_cluster_circles();
+    }
+    
 }

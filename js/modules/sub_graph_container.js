@@ -1,6 +1,6 @@
 import {datas, data, activeNode} from '../graph.js';
 import {fileName} from './graph_change_container.js';
-import {render_sub_graph} from '../algorithm/sub_graph.js';
+import {render_sub_graph} from '../modules_clustering/sub_graph.js';
 import {updateComboBox} from './graph_change_container.js';
 
 //生成子图按钮

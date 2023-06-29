@@ -1,7 +1,7 @@
-export var draw_legend = function(nodeType, edgeType, nodeColorScale, linkColorScale){
-    var svg = d3.select("#graph");
+export var draw_legend = function(svg, nodeType, edgeType, nodeColorScale, linkColorScale){
+    var legend_container = svg.append("g").attr("id", "legendContainer");
     // 绘制颜色比例尺
-    const nodeColorLegend = svg.selectAll("#nodeColorLegend")
+    const nodeColorLegend = legend_container.selectAll("#nodeColorLegend")
         .data(Object.keys(nodeType))
         .enter()
         .append("g")
@@ -20,7 +20,7 @@ export var draw_legend = function(nodeType, edgeType, nodeColorScale, linkColorS
         .attr("y", 10)
         .text(d => d);
 
-    const linkColorLegend = svg.selectAll("#linkColorLegend")
+    const linkColorLegend = legend_container.selectAll("#linkColorLegend")
         .data(Object.keys(edgeType))
         .enter()
         .append("g")
