@@ -8,8 +8,8 @@ import { draw_legend } from "./modules/draw_legend.js";
 import { gen_force_simulation } from "./modules/forceSimulation.js";
 import { get_links, get_links_text } from "./modules/links.js";
 import { get_nodes } from "./modules/nodes.js";
-import "./modules/marker.js"
 import { get_marker } from "./modules/marker.js";
+import { get_cluster_circle } from "./modules/cluster_circle.js"
 
 var margin = {top:60,bottom:60,left:60,right:60}
 var svg = d3.select("#graph")    //获取画布
@@ -17,8 +17,6 @@ var width = svg.attr("width")  //画布的宽
 var height = svg.attr("height")   //画布的高
 
 var activeNode;
-
-var curGraph;
 
 var forceSimulation;
 var links;
@@ -61,6 +59,7 @@ var renderGraph = function(){
     var g = svg.append("g")
         .attr("class", "container")
         .attr("transform","translate("+margin.top+","+margin.left+")");
+    console.log(data);
     //节点和边
     var nodes = data.nodes;
     var edges = data.edges;
@@ -76,8 +75,8 @@ var renderGraph = function(){
     nodeSizeScale = get_node_size_scale(nodes);
     attrColorScale = get_attr_color_scale(nodes);
     //绘制比例尺图例
-    draw_legend(nodeType, edgeType, nodeColorScale, linkColorScale);
-    //力道图模型
+    draw_legend(svg, nodeType, edgeType, nodeColorScale, linkColorScale);
+    //力导图模型
     forceSimulation = gen_force_simulation(nodes, edges);
     //边
     links = get_links(edges, svg, g);
@@ -85,6 +84,8 @@ var renderGraph = function(){
     linksText = get_links_text(g, edges);
     //节点
     gs = get_nodes(g, nodes, forceSimulation);
+    //聚类圆圈
+    get_cluster_circle(g);
     //箭头
     get_marker(svg);
 }

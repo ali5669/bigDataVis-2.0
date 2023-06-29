@@ -72,7 +72,7 @@ export var get_nodes = function(g, nodes){
             .duration(100)
             .style("stroke-opacity", "0.8")
         connectNode.push(d.id);
-        d3.select("#left").selectAll("circle")
+        gs.selectAll("circle")
             .filter(dnode=>!connectNode.includes(dnode.id))
             .transition()
             .duration(100)

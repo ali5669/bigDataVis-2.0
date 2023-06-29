@@ -3,6 +3,7 @@ import { cluster_flag } from './cluster_mode_container.js';
 
 export var get_links = function(edges, svg, g){
     var num = 0;
+    var linkColorDefs = svg.append("defs").attr("id", "linkColorDefs");
     var links = g.append("g")
         .selectAll("line")   //选择所有"line"元素
         .data(edges)   //将edges绑定上
@@ -11,16 +12,16 @@ export var get_links = function(edges, svg, g){
         .append("line")
         .attr("stroke",function(d,i)
         {
+            if(d.edge_type.length === 1){
+                return linkColorScale(d.edge_type[0]);
+            }
             num++;
-            var gradient = svg.append("defs")
+            var gradient = linkColorDefs.append("defs")
                 .append("linearGradient")
                 .attr("id", "edge-gradient" + num);
-            var step = (d.edge_type.length - 1);
+            var step = 100 / (d.edge_type.length - 1);
             var cnt = 0;
-            if(d.edge_type.length === 1){
-                step = 100;
-                cnt = 1;
-            }
+            
             d.edge_type.forEach(element => {
                 var color = linkColorScale(element); 
                 gradient.append("stop")
@@ -35,8 +36,6 @@ export var get_links = function(edges, svg, g){
         .attr("stroke-width",function(d,i){
             return d.weight * 2;
         });   //边的粗细
-
-    
     return links;
 }
 
