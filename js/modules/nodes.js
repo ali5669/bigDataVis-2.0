@@ -9,7 +9,7 @@ export var get_nodes = function(g, nodes){
     var gs = g.selectAll(".circleText")
         .data(nodes)
         .enter()
-        .filter(d=>cluster_flag || d.id.indexOf("@") == -1)
+        .filter(d=>cluster_flag || d.node_type != "hidden_node")
         .append("g")
         .attr("transform",function(d,i){
             var cirX = d.x;
@@ -24,16 +24,17 @@ export var get_nodes = function(g, nodes){
 
     //绘制节点
     gs.append("circle")
+        .filter(d=>d.node_type != "hidden_node")
         .attr("r", d=>{//每个顶点的大小
-            if(d.node_type == "hidden_node"){
-                return 100;
-            }
+            // if(d.node_type == "hidden_node"){
+            //     return 100;
+            // }
             return nodeSizeScale(d.degree)
         })   
         .attr("fill",function(d,i){//颜色
-            if(d.node_type == "hidden_node"){
-                return "rgba(255, 133, 81, 0.2)";
-            }
+            // if(d.node_type == "hidden_node"){
+            //     return "rgba(255, 133, 81, 0.2)";
+            // }
             if(color_mode == "node_type"){
                 return nodeColorScale(d.node_type);  
             }
@@ -47,6 +48,7 @@ export var get_nodes = function(g, nodes){
 
     //顶点上的文字
     gs.append("text")
+        .filter(d=>d.node_type != "hidden_node")
         .attr("x",-10)
         .attr("y",-20)
         .attr("dy",10)

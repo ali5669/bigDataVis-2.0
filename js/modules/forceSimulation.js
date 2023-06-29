@@ -84,7 +84,10 @@ function ticked()
         });
 
     gs.attr("transform",function(d) { return "translate(" + d.x + "," + d.y + ")"; });
-
-    // TODO: 给cluster——circle绑定更新语句
-    update_cluster_circles();
+    
+    if (cluster_flag) {
+        // TODO: 给cluster——circle绑定更新语句
+        update_cluster_circles();
+    }
+    
 }
