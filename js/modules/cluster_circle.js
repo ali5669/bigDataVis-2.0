@@ -1,5 +1,5 @@
 import {nodeSizeScale, data} from '../graph.js';
-import { cluster_flag } from './cluster_mode_container.js';
+import { cluster_flag } from './cluster_generate_container.js';
 var enclosingCircles;
 
 export var get_cluster_circle = function(g){
@@ -10,7 +10,9 @@ export var get_cluster_circle = function(g){
             var enclosingCircle = g.append("circle")
                 .attr("id", "cluster" + cluster_name)
                 .attr("stroke", "red")
-                .attr("fill", "none");
+                .attr("fill", "yellow")
+                .attr("opacity", "0.2")
+                .style("pointer-events", "none");
             enclosingCircles[cluster_name] = enclosingCircle;
         }
 

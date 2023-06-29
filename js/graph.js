@@ -1,8 +1,6 @@
 import { render_cartograms } from "./statistics.js"
 import { addOption2ComboBox } from "./modules/graph_change_container.js"
 import "./modules/cluster_generate_container.js"
-import "./modules/cluster_mode_container.js"
-import { cluster_flag } from "./modules/cluster_mode_container.js"
 import "./modules/sub_graph_container.js"
 import { get_node_color_scale, get_link_color_scale, get_node_size_scale, get_attr_color_scale} from './modules/scale.js';
 import { draw_legend } from "./modules/draw_legend.js";
@@ -31,6 +29,8 @@ var attrColorScale;
 
 var data;
 var datas = new Array();
+
+var zoom;
 
 //设置data
 var setData = function(newData){
@@ -109,7 +109,7 @@ var render = function(fileName){
     }
     console.log(datas);
 
-    svg.call(d3.zoom()
+    zoom = svg.call(d3.zoom()
         .scaleExtent([0.1,3])
         .on("zoom", zoomed));
     function zoomed() {
@@ -131,4 +131,4 @@ function addData(fileName){
 
 export {width, height, activeNode, forceSimulation, links, linksText, gs, nodeColorScale, 
     linkColorScale, nodeSizeScale, attrColorScale, data, datas, setData, setActiveNode, 
-    resetGraph, updateGraph, renderGraph, render};
+    resetGraph, updateGraph, renderGraph, render, zoom};

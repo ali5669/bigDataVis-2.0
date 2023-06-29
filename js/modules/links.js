@@ -1,5 +1,4 @@
 import { linkColorScale } from '../graph.js';
-import { cluster_flag } from './cluster_mode_container.js';
 
 export var get_links = function(edges, svg, g){
     var num = 0;

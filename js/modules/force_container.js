@@ -4,7 +4,7 @@ var ownership_force = 1;
 var partnership_force = 1;
 var family_relationship_force = 1;
 var membership_force = 1;
-var cluster_force = 1;
+var cluster_force = 2;
 
 // 力调整滑块
 var force_container = d3.select("#right").append("div");
@@ -52,4 +52,14 @@ force_container.append("input")
     .attr("value", membership_force)
     .on("mouseup", function() { membership_force = this.value; updateGraph(); renderGraph();});
 
-export {ownership_force, partnership_force, family_relationship_force, membership_force, cluster_force};
+var resetForce = function(){
+    force_container.selectAll("input")
+        .property("value", 0)
+        .attr("value", 0);
+    ownership_force = 0;
+    partnership_force = 0;
+    family_relationship_force = 0;
+    membership_force = 0;
+}
+
+export {ownership_force, partnership_force, family_relationship_force, membership_force, cluster_force, resetForce};

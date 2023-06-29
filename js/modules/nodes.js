@@ -1,5 +1,5 @@
 import { nodeSizeScale, nodeColorScale, attrColorScale, forceSimulation, setActiveNode} from "../graph.js";
-import { cluster_flag } from "./cluster_mode_container.js";
+import { cluster_flag } from "./cluster_generate_container.js";
 import { color_mode, credibility_flag } from "./color_mode_container.js";
 import { attrColorInterpolate } from "./scale.js";
 import { updateTable } from './node_search_container.js';
