@@ -8,7 +8,8 @@ export var get_links = function(edges, svg, g){
         .selectAll("line")   //选择所有"line"元素
         .data(edges)   //将edges绑定上
         .enter()
-        .filter(d=>cluster_flag || d.source.id.indexOf("@") == -1)
+        // .filter(d=>cluster_flag || d.edge_type != "hidden_edge")
+        .filter(d=>d.edge_type != "hidden_edge")
         .append("line")
         .attr("stroke",function(d,i)
         {

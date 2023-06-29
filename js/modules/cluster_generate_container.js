@@ -1,6 +1,6 @@
 import {updateComboBox, fileName} from './graph_change_container.js';
 import {activeNode, data, datas, setActiveNode} from '../graph.js';
-import {render_sub_graph} from '../algorithm/sub_graph.js';
+import {render_sub_graph} from '../modules_clustering/sub_graph.js';
 
 //生成聚类按钮
 var cluster_genarate_container = d3.select("#right").append("div");
@@ -27,4 +27,6 @@ cluster_genarate_container.select("select").append("option")
 cluster_genarate_container.select("select").append("option")
     .attr("value", "Spectral").text("Spectral");
 cluster_genarate_container.select("select").append("option")
-    .attr("value", "Newman_Girvan").text("Newman_Girvan"); 
+    .attr("value", "Newman_Girvan").text("Newman_Girvan");
+cluster_genarate_container.select("select").append("option")
+    .attr("value", "Country").text("Country"); 

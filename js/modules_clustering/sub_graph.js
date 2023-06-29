@@ -1,3 +1,4 @@
+import { get_country_cluster } from "./country_clustering.js";
 import { get_spectral_cluster } from "./spectral_clustering.js";
 import { get_louvain_cluster } from "./louvain_clustering.js";
 import { get_newman_girvan_cluster } from "./newman_girvan_clustering.js";
@@ -41,10 +42,12 @@ export function render_sub_graph (data_graph, node_id, method) {
     
     graph = new graphology.Graph();
     data_graph.nodes.forEach(function (d) {
-        if (!graph.hasNode(d.id) && d.id.indexOf("@") == -1) graph.addNode(d.id);
+        if (!graph.hasNode(d.id) && d.node_type != "hidden_node") graph.addNode(d.id, {
+            country:d.country
+        });
     });
     data_graph.edges.forEach(function (d) {
-        if (d.source.id.indexOf("@") == -1) graph.addDirectedEdge(d.source.id, d.target.id, {
+        if (d.source.node_type != "hidden_node") graph.addDirectedEdge(d.source.id, d.target.id, {
             weight:d.weight
         });
     });
@@ -60,7 +63,10 @@ export function render_sub_graph (data_graph, node_id, method) {
         nodes:[]
     };
 
-    if (method == "Spectral") {
+    if (method == "Country") {
+        var cluster_res = get_country_cluster(graph);
+    }
+    else if (method == "Spectral") {
         var cluster_res = get_spectral_cluster(graph);
     }
     else if (method == "Louvain") {
@@ -80,11 +86,14 @@ export function render_sub_graph (data_graph, node_id, method) {
 
     var cluster_labels = Object.entries(cluster_res).map(d => d[1]);
     var cluster_labels_count = {};
-    cluster_labels.forEach(function (d) {
-        if (cluster_labels_count[d]) cluster_labels_count[d] += 1;
-        else cluster_labels_count[d] = 1;
+    cluster_labels.forEach(function (cluster_label) {
+        if (cluster_label != null) {
+            if (cluster_labels_count[cluster_label]) cluster_labels_count[cluster_label] += 1;
+            else cluster_labels_count[cluster_label] = 1;
+        }
     });
-    var n_clusters = Math.max.apply(null, cluster_labels) + 1;
+    // console.log("cluster_labels_count", cluster_labels_count)
+    // var n_clusters = Math.max.apply(null, cluster_labels) + 1;
 
     if (node_id == null) {
         data_graph.edges.forEach(function (d) {
@@ -99,23 +108,33 @@ export function render_sub_graph (data_graph, node_id, method) {
             }
         });
         data_graph.nodes.forEach(function (d) {
-            d["cluster"] = "@Cluster" + cluster_res[d.id];
+            
             if (d.node_type != "hidden_node") {
-                var hidden_edge = {
-                    source:d["cluster"],
-                    target:d.id,
-                    edge_type:["hidden_edge"],
-                    weight:1
-                };
+                if (cluster_res[d.id] == null) {
+                    d["cluster"] = null;
+                    // data_out.nodes.push(d);
+                }
+                else {
+                    d["cluster"] = cluster_res[d.id];
+                    var hidden_edge = {
+                        source:"@Cluster_" + cluster_res[d.id],
+                        target:d.id,
+                        edge_type:["hidden_edge"],
+                        weight:1
+                    };
+                    data_out.edges.push(hidden_edge);
+                }
                 data_out.nodes.push(d);
-                data_out.edges.push(hidden_edge);
+                // console.log(d["cluster"]);
             }
+            
         });
         data_out.country_list = get_country_list(data_out);
-        for (var i = 0; i < n_clusters; i ++) {
+        data_out.cluster_list = cluster_labels_count;
+        for (let cluster_name in cluster_labels_count) {
             var hidden_node = {
-                id:"@Cluster" + i,
-                degree:cluster_labels_count[i],
+                id:"@Cluster_" + cluster_name,
+                degree:cluster_labels_count[cluster_name],
                 node_type:"hidden_node",
                 country:null
             };
@@ -152,31 +171,32 @@ export function render_sub_graph (data_graph, node_id, method) {
             if (d.node_type != "hidden_node" && (cluster_res[d.id] == node_label || node_neighbors.indexOf(d.id) != -1)) {
                 data_out.nodes.push(d);
                 // console.log(d.country, d.country==null)
-                if (d.country != null) {
-                    var hidden_edge = {
-                        source:"@" + d.country,
-                        target:d.id,
-                        edge_type:["hidden_edge"],
-                        weight:1
-                    };
-                    data_out.edges.push(hidden_edge);
-                }
+                // if (d.country != null) {
+                //     var hidden_edge = {
+                //         source:"@" + d.country,
+                //         target:d.id,
+                //         edge_type:["hidden_edge"],
+                //         weight:1
+                //     };
+                //     data_out.edges.push(hidden_edge);
+                // }
             }
         });
         data_out.country_list = get_country_list(data_out);
-        for (var key in data_out.country_list) {
-            if (key != "null") {
-                var hidden_node = {
-                    id:"@" + key,
-                    degree:data_out.country_list[key],
-                    node_type:"hidden_node",
-                    country:null
-                };
-                data_out.nodes.push(hidden_node);
-            }
-        }
+        // for (var key in data_out.country_list) {
+        //     if (key != "null") {
+        //         var hidden_node = {
+        //             id:"@" + key,
+        //             degree:data_out.country_list[key],
+        //             node_type:"hidden_node",
+        //             country:null
+        //         };
+        //         data_out.nodes.push(hidden_node);
+        //     }
+        // }
         data_out.node_type_list = get_node_type_list(data_out);
         data_out.edge_type_list = get_edge_type_list(data_out);
     }
+    console.log("data_out", data_out);
     return data_out;
 };
