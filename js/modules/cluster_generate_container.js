@@ -1,6 +1,6 @@
 import {resetGraph, renderGraph, data, datas, setActiveNode, setData} from '../graph.js';
 import {render_sub_graph} from '../modules_clustering/sub_graph.js';
-import { resetForce } from './force_container.js';
+import { setForce } from './force_container.js';
 
 //聚类模式
 export var cluster_flag = false;
@@ -18,10 +18,12 @@ cluster_genarate_container.append("select")
             var data_out = render_sub_graph(data, null, cluster_method);
             setData(data_out);
             cluster_flag = true;
+            setForce(0);
         }else{
             cluster_flag = false;
+            setForce(1);
         }
-        resetForce();
+        
         resetGraph();
         renderGraph();
         console.log(cluster_method);

@@ -1,3 +1,6 @@
+import { forceSimulation, renderGraph, resetGraph, updateGraph } from "../graph.js";
+import { clearForce , setForce} from "./forceSimulation.js";
+
 var stop_flag = false;
 var stop_mode_container = d3.select("#right").append("div");
 stop_mode_container.append("input")
@@ -6,8 +9,12 @@ stop_mode_container.append("input")
         stop_flag = !stop_flag;
         if(stop_flag){
             forceSimulation.stop();
+            clearForce(forceSimulation);
         }else{
-            forceSimulation.restart();
+            console.log("return to normal!");
+            setForce(forceSimulation);
+            updateGraph();
+            renderGraph();
         }
         console.log(stop_flag);
     })

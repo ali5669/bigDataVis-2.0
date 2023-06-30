@@ -4,9 +4,40 @@ import {forceScale} from './scale.js';
 import {nodeSizeScale, width, height, links, linksText, gs} from '../graph.js';
 import { update_cluster_circles } from './cluster_circle.js';
 
-export var gen_force_simulation = function(nodes, edges){
+var num;
+
+var gen_force_simulation = function(nodes, edges){
     //新建一个力导向图，固定语句
-    var forceSimulation = d3.forceSimulation()
+    var forceSimulation = d3.forceSimulation();
+    setForce(forceSimulation);
+
+    //初始化力导向图，也就是传入数据
+    //生成节点数据
+    forceSimulation.nodes(nodes).on("tick",ticked);//on()方法用于绑定时间监听器，tick事件是力导向布局每隔一段时间就会做的事
+
+    //生成边数据
+    forceSimulation.force("link")
+        .links(edges)
+        .distance(function(d){//每一边显示出来的长度
+            // d.source.
+            if(cluster_flag){
+                return 0;
+            }
+            var len = nodeSizeScale(d.source.degree) + nodeSizeScale(d.target.degree);
+            len = len + 50;
+
+            // return Math.ceil((Math.random()+2)*100);
+            return Math.ceil(len);
+        })    	
+
+    //设置图形的中心位置	
+    forceSimulation.force("center").x(width/3).y(height/3);	
+
+    return forceSimulation;
+}
+
+var setForce = function(forceSimulation){
+    forceSimulation
         .force("link",d3.forceLink().id(d=>d.id).strength(link=>{
             var forceStd = 1/Math.min(link.source.degree, link.target.degree);
             var linkForce = 0;
@@ -37,31 +68,16 @@ export var gen_force_simulation = function(nodes, edges){
         // .force("collide",d3.forceCollide(d=>d.r * 2))
         .force("center",d3.forceCenter(width/2, height/2));
 
-    //初始化力导向图，也就是传入数据
-    //生成节点数据
-    forceSimulation.nodes(nodes).on("tick",ticked);//on()方法用于绑定时间监听器，tick事件是力导向布局每隔一段时间就会做的事
-
-    //生成边数据
-    forceSimulation.force("link")
-        .links(edges)
-        .distance(function(d){//每一边显示出来的长度
-            // d.source.
-            if(cluster_flag){
-                return 0;
-            }
-            var len = nodeSizeScale(d.source.degree) + nodeSizeScale(d.target.degree);
-            len = len + 50;
-
-            // return Math.ceil((Math.random()+2)*100);
-            return Math.ceil(len);
-        })    	
-
-    //设置图形的中心位置	
-    forceSimulation.force("center").x(width/3).y(height/3);	
-
-    return forceSimulation;
+    
+    console.log(forceSimulation.force("link"));
 }
 
+var clearForce = function(forceSimulation){
+    forceSimulation
+        .force("link", null)
+        .force("charge", null)
+        .force("center", null);
+}
 
 function ticked()
 {
@@ -89,5 +105,6 @@ function ticked()
         // TODO: 给cluster——circle绑定更新语句
         update_cluster_circles();
     }
-    
 }
+
+export {gen_force_simulation, setForce, clearForce};
