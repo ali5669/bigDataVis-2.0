@@ -3,7 +3,7 @@ import { cluster_flag } from "./cluster_generate_container.js";
 import { color_mode, credibility_flag } from "./color_mode_container.js";
 import { attrColorInterpolate } from "./scale.js";
 import { updateTable } from './node_search_container.js';
-import { stop_flag } from "./stop_mode_container.js";
+// import { stop_flag } from "./stop_mode_container.js";
 
 export var get_nodes = function(g, nodes){
     //绘制顶点
@@ -110,10 +110,10 @@ export var get_nodes = function(g, nodes){
 //选中
 function started(d)
 {
-    // if(!d3.event.active)//当现在没有动画，
-    // {
-    forceSimulation.alphaTarget(0.9).restart();
-    // }
+    if(!d3.event.active)//当现在没有动画，
+    {
+        forceSimulation.alphaTarget(0.9).restart();
+    }
 
     d.fx = d.x;
     d.fy = d.y;
@@ -131,14 +131,15 @@ function dragged(d)
 //松开
 function ended(d)
 {
-    // if(!d3.event.active)
-    // {
-    if(stop_flag){
-        forceSimulation.alphaTarget(0).stop(); 
-    }else{
+    if(!d3.event.active)
+    {
+        // if(stop_flag){
+        //     forceSimulation.alphaTarget(0).stop(); 
+        // }else{
+        //     forceSimulation.alphaTarget(0);
+        // }
         forceSimulation.alphaTarget(0);
     }
-    // }
     d.fx = null;
     d.fy = null;
 }

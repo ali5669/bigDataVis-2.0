@@ -2,7 +2,7 @@ import { render_cartograms } from "./statistics.js"
 import { addOption2ComboBox } from "./modules/graph_change_container.js"
 import "./modules/cluster_generate_container.js"
 import "./modules/sub_graph_container.js"
-import "./modules/stop_mode_container.js"
+// import "./modules/stop_mode_container.js"
 import { get_node_color_scale, get_link_color_scale, get_node_size_scale, get_attr_color_scale} from './modules/scale.js';
 import { draw_legend } from "./modules/draw_legend.js";
 import { gen_force_simulation } from "./modules/forceSimulation.js";
