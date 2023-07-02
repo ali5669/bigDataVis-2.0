@@ -62,4 +62,4 @@ var resetForce = function(strength){
     membership_force = strength;
 }
 
-export {ownership_force, partnership_force, family_relationship_force, membership_force, cluster_force, setForce};
+export {ownership_force, partnership_force, family_relationship_force, membership_force, cluster_force, resetForce};
