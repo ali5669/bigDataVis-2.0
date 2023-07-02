@@ -1,7 +1,22 @@
+import { credibility_assign } from "./node_credibility.js";
+import { vessel_ownership_assign } from "./node_vessel_ownership.js";
+
 var graph;
-const attr_key = "attr_value";
 const credibility_key = "credibility_value";
-const reliable_node_ids = ["FishEye International"]
+const attr_key = "attr_value";
+const multi_graph_attrs = [
+    "Weighted_Degree",
+    "Eccentricity",
+    "Credibility_ShortestPath",
+    "Betweenness_Centrality",
+    "Closeness_Centrality",
+    "Degree_Centrality",
+    "Eigenvector_Centrality",
+    "PageRank",
+];
+const direct_edge_attrs = [
+    "Vessel_Ownership"
+];
 
 var node_attr_value_map = function (data_graph, graph, graph_attr_key, is_credibility=false) {
     data_graph.nodes.forEach(function (d) {
@@ -13,62 +28,39 @@ var node_attr_value_map = function (data_graph, graph, graph_attr_key, is_credib
     return data_graph;
 }
 
-var credibility_assign = function (graph) {
-
-    if (!graph.hasAttribute(credibility_key)) {
-        var has_reliable_node = false;
-        reliable_node_ids.forEach(function (reliable_node_id) {
-            if (graph.hasNode(reliable_node_id)) has_reliable_node = true;
-        });
-        if (has_reliable_node) {
-            graph.forEachNode(function (node) {
-                // console.log(node);
-                if (reliable_node_ids.indexOf(node) != -1) {
-                    graph.setNodeAttribute(node, 'credibility', 1)
-                }
-                else {
-                    var min_dist = Infinity;
-                    reliable_node_ids.forEach(function (reliable_node_id) {
-                        var reliable_node_path = graphologyLibrary.shortestPath.dijkstra.bidirectional(graph, reliable_node_id, node);
-                        if (reliable_node_path != null) {
-                            if (reliable_node_path.length < min_dist) {
-                                min_dist = reliable_node_path.length;
-                            }
-                        }
-                    });
-                    graph.setNodeAttribute(node, 'credibility', 1 / min_dist)
-                }
-            });
-        }
-        else {
-            graph.forEachNode(function (node) {
-                // console.log(node);
-                graph.setNodeAttribute(node, 'credibility', 0)
-            });
-        }
-    }
-}
-
 export function get_attr_value (data_graph, attr_name) {
     
     var data_out;
-    const is_multi_graph = attr_name.slice(0, 4) == "HITS";
+    const is_multi_graph = multi_graph_attrs.indexOf(attr_name) != -1;
+    const is_direct_edge = direct_edge_attrs.indexOf(attr_name) != -1;
     if (is_multi_graph) {
-        graph = new graphology.Graph();
+        graph = new graphology.MultiGraph();
     }
     else {
-        graph = new graphology.MultiGraph();
+        graph = new graphology.Graph();
     }
     
     data_graph.nodes.forEach(function (d) {
-        if (!graph.hasNode(d.id) && d.node_type != "hidden_node") graph.addNode(d.id);
+        if (!graph.hasNode(d.id) && d.node_type != "hidden_node") graph.addNode(d.id, {
+            node_type:d.node_type
+        });
     });
     data_graph.edges.forEach(function (d) {
         if (d.source.node_type != "hidden_node") {
-            if (is_multi_graph && !graph.hasEdge(d.source.id, d.target.id)) {
-                graph.addUndirectedEdge(d.source.id, d.target.id, {
-                    weight:d.weight
-                });
+            if (is_multi_graph || !graph.hasEdge(d.source.id, d.target.id)) {
+            // if (!graph.hasEdge(d.source.id, d.target.id)) {
+                if (is_direct_edge) {
+                    graph.addDirectedEdge(d.source.id, d.target.id, {
+                        edge_type:d.edge_type,
+                        weight:d.weight
+                    });
+                }
+                else {
+                    graph.addUndirectedEdge(d.source.id, d.target.id, {
+                        edge_type:d.edge_type,
+                        weight:d.weight
+                    });
+                }
             }
         }
     });
@@ -121,9 +113,15 @@ export function get_attr_value (data_graph, attr_name) {
         graphologyLibrary.metrics.centrality.pagerank.assign(graph);
         data_out = node_attr_value_map(data_graph, graph, 'pagerank');
     }
+    else if (attr_name == "Vessel_Ownership") {
+        vessel_ownership_assign(graph);
+        data_out = node_attr_value_map(data_graph, graph, 'vesselOwnership');
+    }
     else {
         console.log(method + "Not Implemented.")
     }
 
     return data_out;
 }
+
+export { attr_key, credibility_key };

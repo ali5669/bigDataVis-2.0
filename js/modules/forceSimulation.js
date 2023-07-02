@@ -1,5 +1,5 @@
 import {ownership_force, partnership_force, family_relationship_force, membership_force, cluster_force} from './force_container.js';
-import {cluster_flag} from './cluster_generate_container.js';
+import {cluster_flag} from './cluster_method_container.js';
 import {forceScale} from './scale.js';
 import {nodeSizeScale, width, height, links, linksText, gs} from '../graph.js';
 import { update_cluster_circles } from './cluster_circle.js';
