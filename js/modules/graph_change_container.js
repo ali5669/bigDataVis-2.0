@@ -1,4 +1,7 @@
-import {updateGraph, render, datas} from '../graph.js';
+import { updateGraph, render, datas } from '../graph.js';
+import { resetColorModeContainer } from './color_mode_container.js';
+import { resetClusterMethodContainer } from './cluster_method_container.js';
+
 var fileName = "979893388";
 var graph_names;
 // 图像切换下拉单
@@ -10,6 +13,8 @@ graph_change_container.append("select")
     .on("change", function(){
         fileName = d3.select(this).property("value");
         console.log(fileName);
+        resetClusterMethodContainer();
+        resetColorModeContainer();
         updateGraph();
         render(fileName);
     })

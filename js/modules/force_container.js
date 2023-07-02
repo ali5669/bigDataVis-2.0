@@ -52,14 +52,14 @@ force_container.append("input")
     .attr("value", membership_force)
     .on("mouseup", function() { membership_force = this.value; updateGraph(); renderGraph();});
 
-var setForce = function(value){
+var resetForce = function(strength){
     force_container.selectAll("input")
-        .property("value", value)
-        .attr("value", value);
-    ownership_force = value;
-    partnership_force = value;
-    family_relationship_force = value;
-    membership_force = value;
+        .property("value", strength)
+        .attr("value", strength);
+    ownership_force = strength;
+    partnership_force = strength;
+    family_relationship_force = strength;
+    membership_force = strength;
 }
 
-export {ownership_force, partnership_force, family_relationship_force, membership_force, cluster_force, setForce};
+export {ownership_force, partnership_force, family_relationship_force, membership_force, cluster_force, resetForce};
