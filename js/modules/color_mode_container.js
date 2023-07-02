@@ -27,6 +27,13 @@ color_mode_container.append("select")
         // 更改其attr的fill
 
     })
+
+function resetColorModeContainer () {
+    color_mode = "node_type";
+    color_mode_container.select("select")
+        .property("value", "node_type");
+}
+
 color_mode_container.select("select").append("option")
     .attr("value", "node_type").text("节点类型");
 color_mode_container.select("select").append("option")
@@ -49,5 +56,7 @@ color_mode_container.select("select").append("option")
     .attr("value", "HITS_Hub").text("HITS_Hub");
 color_mode_container.select("select").append("option")
     .attr("value", "PageRank").text("PageRank");
+color_mode_container.select("select").append("option")
+    .attr("value", "Vessel_Ownership").text("Vessel_Ownership");
 
-export {color_mode, credibility_flag};
+export {color_mode, credibility_flag, resetColorModeContainer};

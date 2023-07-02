@@ -1,5 +1,5 @@
 import {nodeSizeScale, data} from '../graph.js';
-import { cluster_flag } from './cluster_generate_container.js';
+import { cluster_flag } from './cluster_method_container.js';
 var enclosingCircles;
 
 export var get_cluster_circle = function(g){
