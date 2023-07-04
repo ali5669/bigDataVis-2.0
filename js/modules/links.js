@@ -1,4 +1,5 @@
 import { linkColorScale } from '../graph.js';
+import { node_type_flags } from './node_type_filter_container.js';
 
 export var get_links = function(edges, svg, g){
     var num = 0;
@@ -9,6 +10,7 @@ export var get_links = function(edges, svg, g){
         .enter()
         // .filter(d=>cluster_flag || d.edge_type != "hidden_edge")
         .filter(d=>d.edge_type != "hidden_edge")
+        .filter(d=>node_type_flags[d.source.node_type] && node_type_flags[d.target.node_type])
         .append("line")
         .attr("stroke",function(d,i)
         {

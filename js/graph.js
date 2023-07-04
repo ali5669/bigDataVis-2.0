@@ -1,5 +1,6 @@
 import { render_cartograms } from "./statistics.js"
 import { addOption2ComboBox } from "./modules/graph_change_container.js"
+import "./modules/node_type_filter_container.js"
 import "./modules/cluster_method_container.js"
 import "./modules/sub_graph_container.js"
 // import "./modules/stop_mode_container.js"

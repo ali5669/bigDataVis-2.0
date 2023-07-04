@@ -3,6 +3,7 @@ import { cluster_flag } from "./cluster_method_container.js";
 import { color_mode, credibility_flag } from "./color_mode_container.js";
 import { attrColorInterpolate } from "./scale.js";
 import { updateTable } from './node_search_container.js';
+import { node_type_flags } from "./node_type_filter_container.js";
 // import { stop_flag } from "./stop_mode_container.js";
 
 export var get_nodes = function(g, nodes){
@@ -11,6 +12,7 @@ export var get_nodes = function(g, nodes){
         .data(nodes)
         .enter()
         .filter(d=>cluster_flag || d.node_type != "hidden_node")
+        .filter(d=>node_type_flags[d.node_type])
         .append("g")
         .attr("transform",function(d,i){
             var cirX = d.x;
