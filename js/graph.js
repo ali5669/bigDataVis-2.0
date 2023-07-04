@@ -100,13 +100,13 @@ var render = function(fileName){
             datas[fileName] = graph;
             data = graph;
             renderGraph();
-            render_cartograms(data);
+            // render_cartograms(data);
             addOption2ComboBox(fileName);
         })
     }else{
         data = datas[fileName];
         renderGraph();
-        render_cartograms(data);
+        // render_cartograms(data);
     }
     console.log(datas);
 

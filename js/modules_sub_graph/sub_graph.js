@@ -3,40 +3,9 @@ import { get_spectral_cluster } from "./spectral_clustering.js";
 import { get_louvain_cluster } from "./louvain_clustering.js";
 import { get_newman_girvan_cluster } from "./newman_girvan_clustering.js";
 import { get_khop_cluster } from "./khop_clustering.js";
+import { get_country_list, get_node_type_list, get_edge_type_list } from "./utils.js"
 
 var graph;
-
-var get_country_list = function (data_graph) {
-
-    var country_list = {};
-    data_graph.nodes.forEach(function (d) {
-        if (country_list[d.country]) country_list[d.country] += 1;
-        else country_list[d.country] = 1;
-    });
-    return country_list;
-}
-
-var get_node_type_list = function (data_graph) {
-
-    var node_type_list = {};
-    data_graph.nodes.forEach(function (d) {
-        if (node_type_list[d.node_type]) node_type_list[d.node_type] += 1;
-        else node_type_list[d.node_type] = 1;
-    });
-    return node_type_list;
-}
-
-var get_edge_type_list = function (data_graph) {
-
-    var edge_type_list = {};
-    data_graph.edges.forEach(function (dedge) {
-        dedge.edge_type.forEach(function (d) {
-            if (edge_type_list[d]) edge_type_list[d] += 1;
-            else edge_type_list[d] = 1;
-        });
-    });
-    return edge_type_list;
-}
 
 export function render_sub_graph (data_graph, node_id, method) {
     
@@ -92,8 +61,6 @@ export function render_sub_graph (data_graph, node_id, method) {
             else cluster_labels_count[cluster_label] = 1;
         }
     });
-    // console.log("cluster_labels_count", cluster_labels_count)
-    // var n_clusters = Math.max.apply(null, cluster_labels) + 1;
 
     if (node_id == null) {
         data_graph.edges.forEach(function (d) {

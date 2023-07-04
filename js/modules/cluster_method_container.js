@@ -1,5 +1,5 @@
 import { resetGraph, renderGraph, data, datas, setActiveNode, setData } from '../graph.js';
-import { render_sub_graph } from '../modules_clustering/sub_graph.js';
+import { render_sub_graph } from '../modules_sub_graph/sub_graph.js';
 import { resetForce } from './force_container.js';
 import { resetColorModeContainer } from './color_mode_container.js';
 

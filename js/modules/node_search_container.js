@@ -1,4 +1,5 @@
-import {data, activeNode, setActiveNode, zoom, width, height} from '../graph.js';
+import { data, activeNode, setActiveNode, zoom, width, height } from '../graph.js';
+import { render_cartograms } from '../statistics.js';
 //中间节点监视器
 var search_node_id;
 var node_search_container = d3.select("#center").append("div");
@@ -49,6 +50,7 @@ var node_search_btn = node_search_container.append("button")
                     .translate(newTransform.dx, newTransform.dy)
                     .scale(newTransform.scale);
                 d3.zoom().transform(d3.select("#graph"), tempTransform);
+                
             }
         });
     });
@@ -83,6 +85,8 @@ function updateTable(){
     //更新第二列的值
     rows.select("td:last-child")
         .text(d=>activeNode[d]);
+
+    render_cartograms(data);
 }
 
 export {updateTable};
