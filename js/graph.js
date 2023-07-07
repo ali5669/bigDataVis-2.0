@@ -14,6 +14,10 @@ import { get_cluster_circle } from "./modules/cluster_circle.js"
 
 var margin = {top:60,bottom:60,left:60,right:60}
 var svg = d3.select("#graph")    //获取画布
+var g = svg.append("g")
+        .attr("class", "container")
+        .attr("transform","translate("+margin.top+","+margin.left+")");
+var legendContainer = svg.select("#legendContainer");
 var width = svg.attr("width")  //画布的宽
 var height = svg.attr("height")   //画布的高
 
@@ -54,14 +58,14 @@ var resetGraph = function(){
 
 // 刷新图
 var updateGraph = function(){
-    svg.selectAll("*").remove();
+    g.selectAll("*").remove();
+    svg.select("#legendContainer").remove();
+    svg.selectAll("marker").remove();
+    svg.selectAll("defs").remove();
 }
 
 // 绘制图
 var renderGraph = function(){
-    var g = svg.append("g")
-        .attr("class", "container")
-        .attr("transform","translate("+margin.top+","+margin.left+")");
     console.log(data);
     //节点和边
     var nodes = data.nodes;

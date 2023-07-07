@@ -1,4 +1,4 @@
-import {data, setData, resetGraph, renderGraph} from '../graph.js';
+import {data, setData, resetGraph, renderGraph, updateGraph} from '../graph.js';
 import {get_attr_value} from '../modules_node_attr/node_attr_value.js';
 
 //颜色模式
@@ -19,7 +19,7 @@ color_mode_container.append("select")
             var data_out = get_attr_value(data, color_mode);
             setData(data_out);
         }
-        resetGraph();
+        updateGraph();
         renderGraph();
         // TODO:
         // 在color—mode改变时，

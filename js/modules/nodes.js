@@ -51,7 +51,7 @@ export var get_nodes = function(g, nodes){
 
     //顶点上的文字
     gs.append("text")
-        .filter(d=>d.node_type != "hidden_node")
+        .filter(d=>d.node_type != "location" && d.node_type != "hidden_node")
         .attr("x",-10)
         .attr("y",-20)
         .attr("dy",10)

@@ -8,7 +8,8 @@ var node_type_flags = {
     "location": true, 
     "vessel": true, 
     "event": true, 
-    "movement": true
+    "movement": true,
+    "null": true
 };
 
 var container = d3.select("#right").append("div")
