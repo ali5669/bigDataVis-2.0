@@ -15,8 +15,8 @@ def get_degree(node, edges):
 # file_name = '8327'
 # file_name = '979893388'
 # file_name = 'Mar de la Vida OJSC'
-# file_name = 'data'
-file_name = 'FishEye International'
+file_name = 'data'
+# file_name = 'FishEye International'
 with open(f'./data/{file_name}.json', 'r', encoding='utf-8') as data_file:
 
     data_cleaned = {
@@ -72,27 +72,27 @@ with open(f'./data/{file_name}.json', 'r', encoding='utf-8') as data_file:
             edges[edge_id]['weight'] += edge['weight']
     data_cleaned['edges'] += edges.values()
 
-    hidden_country_nodes = []
-    for country in data_cleaned['country_list'].keys():
-        if country is not None:
-            hidden_country_node = {
-                'node_type':'hidden_node',
-                'id':'@' + country,
-                'country':None,
-                'degree':data_cleaned['country_list'][country]
-            }
-            hidden_country_nodes.append(hidden_country_node)
+    # hidden_country_nodes = []
+    # for country in data_cleaned['country_list'].keys():
+    #     if country is not None:
+    #         hidden_country_node = {
+    #             'node_type':'hidden_node',
+    #             'id':'@' + country,
+    #             'country':None,
+    #             'degree':data_cleaned['country_list'][country]
+    #         }
+    #         hidden_country_nodes.append(hidden_country_node)
 
-    for node in data['nodes']:
-        if node['country'] is not None:
-            hidden_country_edge = {
-                'edge_type':['hidden_edge'],
-                'source':'@' + node['country'],
-                'target':node['id'],
-                'weight':1
-            }
-            data_cleaned['edges'].append(hidden_country_edge)
-    data_cleaned['nodes'] += hidden_country_nodes
+    # for node in data['nodes']:
+    #     if node['country'] is not None:
+    #         hidden_country_edge = {
+    #             'edge_type':['hidden_edge'],
+    #             'source':'@' + node['country'],
+    #             'target':node['id'],
+    #             'weight':1
+    #         }
+    #         data_cleaned['edges'].append(hidden_country_edge)
+    # data_cleaned['nodes'] += hidden_country_nodes
 
 
 with open(f'./data/{file_name}_cleaned.json', 'w', encoding='utf-8') as data_cleaned_file:
