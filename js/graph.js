@@ -11,6 +11,7 @@ import { get_links, get_links_text } from "./modules/links.js";
 import { get_nodes } from "./modules/nodes.js";
 import { get_marker } from "./modules/marker.js";
 import { get_cluster_circle } from "./modules/cluster_circle.js"
+import { get_nodes_statistics } from "./modules_node_attr/nodes_statistics.js"
 
 var margin = {top:60,bottom:60,left:60,right:60}
 var svg = d3.select("#graph")    //获取画布
@@ -35,6 +36,7 @@ var attrColorScale;
 
 var data;
 var datas = new Array();
+var data_nodes_statistics = {};
 
 var zoom;
 
@@ -131,10 +133,16 @@ function addData(fileName){
     if(!datas[fileName]){
         d3.json("./data/" + fileName + ".json").then(graph=>{
             datas[fileName] = graph;
+            if(fileName == "data_cleaned"){
+                data_nodes_statistics = get_nodes_statistics(datas[fileName]);
+                console.log("data_nodes_statistics", data_nodes_statistics);
+            }
         })
     }
 }
 
-export {width, height, activeNode, forceSimulation, links, linksText, gs, nodeColorScale, 
-    linkColorScale, nodeSizeScale, attrColorScale, data, datas, setData, setActiveNode, 
-    resetGraph, updateGraph, renderGraph, render, zoom};
+export {
+    width, height, activeNode, forceSimulation, links, linksText, gs, nodeColorScale, 
+    linkColorScale, nodeSizeScale, attrColorScale, data, datas, data_nodes_statistics,
+    setData, setActiveNode, resetGraph, updateGraph, renderGraph, render, zoom
+};

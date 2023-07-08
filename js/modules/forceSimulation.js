@@ -69,7 +69,7 @@ var setForce = function(forceSimulation){
         .force("center",d3.forceCenter(width/2, height/2));
 
     
-    console.log(forceSimulation.force("link"));
+    // console.log(forceSimulation.force("link"));
 }
 
 var clearForce = function(forceSimulation){

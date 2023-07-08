@@ -1,4 +1,4 @@
-import { cartogramSizes } from "../statistics.js";
+import { piechartSizes } from "../statistics.js";
 import { cartogramDuration } from "../statistics.js";
 import { tooltip } from "../statistics.js";
 
@@ -7,11 +7,11 @@ export function render_chordchart (matrix, names, position) {
     var svg = d3.select("#vis");
 
     // 设置弦图的尺寸和位置
-    var width = cartogramSizes.width;
-    var height = cartogramSizes.height;
-    var outerRadius = Math.min(cartogramSizes.width, cartogramSizes.height) / 2 - cartogramSizes.pad
+    var width = piechartSizes.width;
+    var height = piechartSizes.height;
+    var outerRadius = Math.min(piechartSizes.width, piechartSizes.height) / 2 - piechartSizes.pad
     var innerRadius = outerRadius - 10;
-    var offset = position * cartogramSizes.width;
+    var offset = position * piechartSizes.width;
 
     // 创建弦图生成器
     var chord = d3.chord()
@@ -46,8 +46,8 @@ export function render_chordchart (matrix, names, position) {
     // 绘制弦图
     var g = svg.append("g")
         .attr("id", "ChordChart_" + position)
-        .attr("width", cartogramSizes.width)
-        .attr("height", cartogramSizes.height)
+        .attr("width", piechartSizes.width)
+        .attr("height", piechartSizes.height)
         .attr("transform", "translate(" + ((width / 2) + offset) + "," + height / 2 + ")")
         .datum(chords);
 

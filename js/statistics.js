@@ -1,32 +1,45 @@
 import { render_piechart } from "./modules_statistics/piechart.js";
 import { render_barchart } from "./modules_statistics/barchart.js";
 import { render_chordchart } from "./modules_statistics/chordchart.js";
+import { render_violinchart } from "./modules_statistics/violinchart.js";
 import { render_sub_graph } from './modules_sub_graph/sub_graph.js';
 import { activeNode } from "./graph.js"
 
-export const cartogramSizes = {
+const piechartSizes = {
     width:500,
     height:400,
     pad:20
 }
-export const cartogramDuration = 1000;
+const violinchartSizes = {
+    width:250,
+    height:400,
+    pad:20
+}
 
-export var tooltip = d3.select("body").append("div")
+const cartogramDuration = 1000;
+
+const margin = { top: 25, right: 25, bottom: 10, left: 25 };
+
+var tooltip = d3.select("body").append("div")
     .attr("class", "tooltip")
     .attr("opacity", 0.0);
 
-export function render_cartograms (data_graph) {
+function clear_cartograms () {
 
-    const data_graph_1hop = render_sub_graph(data_graph, activeNode.id, "1-Hop");
-
-    d3.select("#bottom")
+    d3.select("#bottom-0")
         .selectAll("g")
         .remove();
-        
-    d3.select("#vis")
-        .attr("width", 3600)
-        .attr("height", 400);
+    d3.select("#bottom-1")
+        .selectAll("g")
+        .remove();
+}
 
+export function render_cartograms (data_graph) {
+
+    clear_cartograms();
+
+    const data_graph_1hop = render_sub_graph(data_graph, activeNode.id, "1-Hop");
+    
     const country_count = data_graph.country_list;
     const node_type_list = data_graph.node_type_list;
     const edge_type_list = data_graph.edge_type_list;
@@ -49,9 +62,24 @@ export function render_cartograms (data_graph) {
     });
 
     render_piechart(country_count_1hop, 0);
-    render_chordchart(flow_matrix, idx2country, 1);
-    // render_barchart(country_count, 2);
-    render_piechart(node_type_list_1hop, 2);
-    render_piechart(edge_type_list_1hop, 3);
+    render_piechart(node_type_list_1hop, 1);
+    render_piechart(edge_type_list_1hop, 2);
 
+    render_violinchart(activeNode, ["degree"], 0);
+    render_violinchart(activeNode, ["weightedDegree"], 1);
+    render_violinchart(activeNode, ["inDegree"], 2);
+    render_violinchart(activeNode, ["outDegree"], 3);
+    render_violinchart(activeNode, ["vesselOwnership"], 4);
+    render_violinchart(activeNode, ["partners"], 5);
+    render_violinchart(activeNode, ["relatives"], 6);
+    render_violinchart(activeNode, ["eventInvolved"], 7);
+    // render_violinchart(activeNode.id, ["inDegree"], 1);
+}
+
+export {
+    piechartSizes,
+    violinchartSizes,
+    cartogramDuration,
+    margin,
+    tooltip
 }

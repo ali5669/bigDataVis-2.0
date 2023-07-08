@@ -1,11 +1,11 @@
-import { cartogramSizes } from "../statistics.js";
+import { piechartSizes } from "../statistics.js";
 import { cartogramDuration } from "../statistics.js";
 import { tooltip } from "../statistics.js";
 
 export function render_piechart (data_dict, position) {
 
     var textArcThres = 0.5;
-    var outerRadius = Math.min(cartogramSizes.width, cartogramSizes.height) / 2 - cartogramSizes.pad
+    var outerRadius = Math.min(piechartSizes.width, piechartSizes.height) / 2 - piechartSizes.pad
     var innerRadius = 0;
     var pie = d3.pie()
         .value(function(d) { return d.value; });
@@ -19,12 +19,12 @@ export function render_piechart (data_dict, position) {
     var colorScale = d3.scaleOrdinal()
         .range(d3.schemeTableau10);
 
-    var offset = position * cartogramSizes.width;
+    var offset = position * piechartSizes.width;
     // 创建SVG容器
-    var svg = d3.select("#vis")
+    var svg = d3.select("#vis-pie")
         .append("g")
         .attr("id", "PieChart_" + position)
-        .attr("transform", "translate(" + ((cartogramSizes.width / 2) + offset) + "," + cartogramSizes.height / 2 + ")");
+        .attr("transform", "translate(" + ((piechartSizes.width / 2) + offset) + "," + piechartSizes.height / 2 + ")");
 
     var pie_data = pie(d3.entries(data_dict))
     pie_data.forEach(function(d) {
@@ -64,7 +64,7 @@ export function render_piechart (data_dict, position) {
         });
 
     arcs.on('mouseenter', (d) => {
-            d3.select("#vis").select("#" + "PieChart_" + position).selectAll("path")
+            d3.select("#vis-pie").select("#" + "PieChart_" + position).selectAll("path")
                 .filter(function (dpath) {
                     return d.index == dpath.index
                 })
@@ -75,8 +75,8 @@ export function render_piechart (data_dict, position) {
                     .outerRadius(outerRadius + 20)
                 );
             tooltip.html('Class:' + d.data.key + "<br/>" + 'Amount:' + d.data.value)
-                .style("left", (d3.event.pageX)+"px")
-                .style("top", (d3.event.pageY+20)+"px")
+                .style("left", (d3.event.pageX + 40)+"px")
+                .style("top", (d3.event.page - 40)+"px")
                 .style("opacity", 1.0);
         })
         .on('mousemove', (d) => {
@@ -87,7 +87,7 @@ export function render_piechart (data_dict, position) {
         
         })
         .on('mouseleave', (d) => {
-            d3.select("#vis").select("#PieChart_" + position).selectAll("path")
+            d3.select("#vis-pie").select("#PieChart_" + position).selectAll("path")
                 .filter(function (dpath) {
                     return d.index == dpath.index
                 })
