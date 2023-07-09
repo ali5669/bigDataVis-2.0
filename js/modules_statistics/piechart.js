@@ -2,7 +2,7 @@ import { piechartSizes } from "../statistics.js";
 import { cartogramDuration } from "../statistics.js";
 import { tooltip } from "../statistics.js";
 
-export function render_piechart (data_dict, position) {
+export function render_piechart (data_dict, color_scale, position) {
 
     var textArcThres = 0.5;
     var outerRadius = Math.min(piechartSizes.width, piechartSizes.height) / 2 - piechartSizes.pad
@@ -15,9 +15,13 @@ export function render_piechart (data_dict, position) {
         .innerRadius(innerRadius)
         .outerRadius(outerRadius);
 
-    // 创建颜色比例尺
-    var colorScale = d3.scaleOrdinal()
+    var colorScale;
+    if (color_scale == null) {
+        // 创建颜色比例尺
+        colorScale = d3.scaleOrdinal()
         .range(d3.schemeTableau10);
+    }
+    else colorScale = color_scale;
 
     var offset = position * piechartSizes.width;
     // 创建SVG容器

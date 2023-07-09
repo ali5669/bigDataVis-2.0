@@ -3,7 +3,7 @@ import { render_barchart } from "./modules_statistics/barchart.js";
 import { render_chordchart } from "./modules_statistics/chordchart.js";
 import { render_violinchart } from "./modules_statistics/violinchart.js";
 import { render_sub_graph } from './modules_sub_graph/sub_graph.js';
-import { activeNode } from "./graph.js"
+import { activeNode, nodeColorScale, linkColorScale } from "./graph.js"
 
 const piechartSizes = {
     width:500,
@@ -61,9 +61,9 @@ export function render_cartograms (data_graph) {
         flow_matrix[country2idx[d.source.country]][country2idx[d.target.country]] += 1;
     });
 
-    render_piechart(country_count_1hop, 0);
-    render_piechart(node_type_list_1hop, 1);
-    render_piechart(edge_type_list_1hop, 2);
+    render_piechart(country_count_1hop, null, 0);
+    render_piechart(node_type_list_1hop, nodeColorScale, 1);
+    render_piechart(edge_type_list_1hop, linkColorScale, 2);
 
     render_violinchart(activeNode, ["degree"], 0);
     render_violinchart(activeNode, ["weightedDegree"], 1);
@@ -73,7 +73,6 @@ export function render_cartograms (data_graph) {
     render_violinchart(activeNode, ["partners"], 5);
     render_violinchart(activeNode, ["relatives"], 6);
     render_violinchart(activeNode, ["eventInvolved"], 7);
-    // render_violinchart(activeNode.id, ["inDegree"], 1);
 }
 
 export {

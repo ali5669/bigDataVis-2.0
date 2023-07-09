@@ -7,7 +7,7 @@ import {updateComboBox} from './graph_change_container.js';
 var sub_graph_container = d3.select("#right").append("div");
 sub_graph_container.append("input")
     .attr("type", "button")
-    .attr("value", "生成子图")
+    .attr("value", "Generate SubGraph")
     .on("click", function(){
         var data_out = render_sub_graph(data, activeNode.id, sub_method);
         // console.log(data_out);

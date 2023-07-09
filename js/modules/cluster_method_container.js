@@ -43,7 +43,7 @@ cluster_method_container.select("select").append("option")
 cluster_method_container.select("select").append("option")
     .attr("value", "Spectral").text("Spectral");
 cluster_method_container.select("select").append("option")
-    .attr("value", "Newman_Girvan").text("Newman_Girvan");
+    .attr("value", "Newman_Girvan").text("Newman Girvan");
 cluster_method_container.select("select").append("option")
     .attr("value", "Country").text("Country");
 

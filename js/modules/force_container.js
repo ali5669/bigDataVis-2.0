@@ -1,9 +1,10 @@
-import {updateGraph, renderGraph} from '../graph.js';
+import { updateGraph, renderGraph } from '../graph.js';
 // 力参数
 var ownership_force = 1;
 var partnership_force = 1;
 var family_relationship_force = 1;
 var membership_force = 1;
+var collide_force = 0;
 var cluster_force = 2;
 
 // 力调整滑块
@@ -12,6 +13,7 @@ force_container.append("p")
     .text("ownership_force");
     
 force_container.append("input")
+    .attr("id", "link_force_input")
     .attr("type", "range")
     .attr("min", 0.0)
     .attr("max", 2.0)
@@ -23,6 +25,7 @@ force_container.append("p")
     .text("partnership_force");
 
 force_container.append("input")
+    .attr("id", "link_force_input")
     .attr("type", "range")
     .attr("min", 0.0)
     .attr("max", 2.0)
@@ -34,6 +37,7 @@ force_container.append("p")
     .text("family_relationship_force");
 
 force_container.append("input")
+    .attr("id", "link_force_input")
     .attr("type", "range")
     .attr("min", 0.0)
     .attr("max", 2.0)
@@ -45,6 +49,7 @@ force_container.append("p")
     .text("membership_force");
 
 force_container.append("input")
+    .attr("id", "link_force_input")
     .attr("type", "range")
     .attr("min", 0.0)
     .attr("max", 2.0)
@@ -52,14 +57,38 @@ force_container.append("input")
     .attr("value", membership_force)
     .on("mouseup", function() { membership_force = this.value; updateGraph(); renderGraph();});
 
+force_container.append("p")
+    .text("collide_force");
+
+force_container.append("input")
+    .attr("id", "collide_force_input")
+    .attr("type", "range")
+    .attr("min", 0.0)
+    .attr("max", 2.0)
+    .attr("step", 0.01)
+    .attr("value", collide_force)
+    .on("mouseup", function() { collide_force = this.value; updateGraph(); renderGraph();});
+
 var resetForce = function(strength){
-    force_container.selectAll("input")
+    force_container.selectAll("#link_force_input")
         .property("value", strength)
         .attr("value", strength);
+    force_container.selectAll("#collide_force_input")
+        .property("value", 0)
+        .attr("value", 0);
     ownership_force = strength;
     partnership_force = strength;
     family_relationship_force = strength;
     membership_force = strength;
+    collide_force = 0;
 }
 
-export {ownership_force, partnership_force, family_relationship_force, membership_force, cluster_force, resetForce};
+export {
+    ownership_force,
+    partnership_force,
+    family_relationship_force,
+    membership_force,
+    collide_force,
+    cluster_force,
+    resetForce
+};

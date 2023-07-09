@@ -75,9 +75,25 @@ var renderGraph = function(){
     //国家数据
     // var country = data.country_list;
     //节点类型数据
-    var nodeType = data.node_type_list;
+    // var nodeType = data.node_type_list;
+    var nodeType = {
+        organization:0,
+        company:1,
+        null:2,
+        location:3,
+        person:4,
+        movement:5,
+        event:6,
+        vessel:7
+    }
     //边类型数据
-    var edgeType = data.edge_type_list;
+    // var edgeType = data.edge_type_list;
+    var edgeType = {
+        ownership:0,
+        family_relationship:1,
+        membership:2,
+        partnership:3
+    }
     //根据数据生成各种比例尺
     nodeColorScale = get_node_color_scale(nodeType);
     linkColorScale = get_link_color_scale(edgeType);

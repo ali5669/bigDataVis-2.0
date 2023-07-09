@@ -5,7 +5,7 @@ var search_node_id;
 var node_search_container = d3.select("#center").append("div");
 var node_search_input = node_search_container.append("input")
     .attr("type", "text")
-    .attr("placeholder", "输入节点ID")
+    .attr("placeholder", "Input Node ID")
     .on("input", function(){
         search_node_id = this.value;
     });
@@ -25,7 +25,7 @@ var get_container_scale = function() {
 
 var node_search_btn = node_search_container.append("button")
     .attr("id", "node_search_btn")
-    .text("标记节点")
+    .text("Locate Node")
     .on("click", function(){
         data.nodes.forEach(node => {
             if(node.id == search_node_id){
@@ -64,8 +64,8 @@ var table = node_monitor_container.append("table")
 //表头
 var thead = table.append("thead");
 var headerRow = thead.append("tr");
-headerRow.append("th").text("节点属性");
-headerRow.append("th").text("值");
+headerRow.append("th").text("Node Attributes");
+headerRow.append("th").text("Value");
 
 var tbody = table.append("tbody");
 
