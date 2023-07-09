@@ -7,7 +7,7 @@ var graph_names;
 // 图像切换下拉单
 var graph_change_container = d3.select("#right").append("div");
 graph_change_container.append("p")
-    .text("图像选择:");
+    .text("Graph Selection:");
 
 graph_change_container.append("select")
     .on("change", function(){

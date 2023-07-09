@@ -1,4 +1,4 @@
-import { cartogramSizes } from "../statistics.js";
+import { piechartSizes } from "../statistics.js";
 import { cartogramDuration } from "../statistics.js";
 import { tooltip } from "../statistics.js";
 
@@ -6,9 +6,9 @@ export function render_barchart (data_dict, position) {
 
     delete data_dict[null];
     // 设置SVG容器的宽度和高度
-    var containerWidth = cartogramSizes.width - 60;
-    var containerHeight = cartogramSizes.height - 20;
-    var offset = position * cartogramSizes.width;
+    var containerWidth = piechartSizes.width - 60;
+    var containerHeight = piechartSizes.height - 20;
+    var offset = position * piechartSizes.width;
 
     // 创建颜色比例尺
     var colorScale = d3.scaleOrdinal()

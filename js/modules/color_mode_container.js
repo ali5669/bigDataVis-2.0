@@ -6,7 +6,7 @@ var color_mode_container = d3.select("#right").append("div");
 var color_mode = "node_type";
 var credibility_flag = false;
 
-color_mode_container.append("p").text("节点颜色模式:")
+color_mode_container.append("p").text("Node Color Mode:")
 color_mode_container.append("select")
     .on("change", function(){
         color_mode = d3.select(this).property("value");
@@ -35,28 +35,28 @@ function resetColorModeContainer () {
 }
 
 color_mode_container.select("select").append("option")
-    .attr("value", "node_type").text("节点类型");
+    .attr("value", "node_type").text("Node Type");
 color_mode_container.select("select").append("option")
-    .attr("value", "Weighted_Degree").text("Weighted_Degree");
+    .attr("value", "Weighted_Degree").text("Weighted Degree");
 // color_mode_container.select("select").append("option")
 //     .attr("value", "Eccentricity").text("Eccentricity");
 color_mode_container.select("select").append("option")
-    .attr("value", "Credibility_ShortestPath").text("Credibility_ShortestPath");
+    .attr("value", "Credibility_ShortestPath").text("Credibility ShortestPath");
 color_mode_container.select("select").append("option")
-    .attr("value", "Betweenness_Centrality").text("Betweenness_Centrality");
+    .attr("value", "Betweenness_Centrality").text("Betweenness Centrality");
 color_mode_container.select("select").append("option")
-    .attr("value", "Closeness_Centrality").text("Closeness_Centrality");
+    .attr("value", "Closeness_Centrality").text("Closeness Centrality");
 color_mode_container.select("select").append("option")
-    .attr("value", "Degree_Centrality").text("Degree_Centrality");
+    .attr("value", "Degree_Centrality").text("Degree Centrality");
 color_mode_container.select("select").append("option")
-    .attr("value", "Eigenvector_Centrality").text("Eigenvector_Centrality");
+    .attr("value", "Eigenvector_Centrality").text("Eigenvector Centrality");
 color_mode_container.select("select").append("option")
-    .attr("value", "HITS_Authority").text("HITS_Authority");
+    .attr("value", "HITS_Authority").text("HITS Authority");
 color_mode_container.select("select").append("option")
-    .attr("value", "HITS_Hub").text("HITS_Hub");
+    .attr("value", "HITS_Hub").text("HITS Hub");
 color_mode_container.select("select").append("option")
     .attr("value", "PageRank").text("PageRank");
 color_mode_container.select("select").append("option")
-    .attr("value", "Vessel_Ownership").text("Vessel_Ownership");
+    .attr("value", "Vessel_Ownership").text("Vessel Ownership");
 
 export {color_mode, credibility_flag, resetColorModeContainer};

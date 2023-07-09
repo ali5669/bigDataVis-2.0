@@ -1,7 +1,7 @@
-import {ownership_force, partnership_force, family_relationship_force, membership_force, cluster_force} from './force_container.js';
-import {cluster_flag} from './cluster_method_container.js';
-import {forceScale} from './scale.js';
-import {nodeSizeScale, width, height, links, linksText, gs} from '../graph.js';
+import { ownership_force, partnership_force, family_relationship_force, membership_force, collide_force, cluster_force } from './force_container.js';
+import { cluster_flag } from './cluster_method_container.js';
+import { forceScale } from './scale.js';
+import { nodeSizeScale, width, height, links, linksText, gs } from '../graph.js';
 import { update_cluster_circles } from './cluster_circle.js';
 
 var num;
@@ -38,7 +38,7 @@ var gen_force_simulation = function(nodes, edges){
 
 var setForce = function(forceSimulation){
     forceSimulation
-        .force("link",d3.forceLink().id(d=>d.id).strength(link=>{
+        .force("link", d3.forceLink().id(d=>d.id).strength(link=>{
             var forceStd = 1/Math.min(link.source.degree, link.target.degree);
             var linkForce = 0;
             link.edge_type.forEach(element => {
@@ -64,12 +64,12 @@ var setForce = function(forceSimulation){
             });
             return forceScale(linkForce);
         }))
-        .force("charge",d3.forceManyBody())
-        // .force("collide",d3.forceCollide(d=>d.r * 2))
-        .force("center",d3.forceCenter(width/2, height/2));
+        .force("charge", d3.forceManyBody(-200))
+        .force("collide", d3.forceCollide(d => nodeSizeScale(d.degree) * collide_force))
+        .force("center", d3.forceCenter(width/2, height/2));
 
     
-    console.log(forceSimulation.force("link"));
+    // console.log(forceSimulation.force("link"));
 }
 
 var clearForce = function(forceSimulation){
