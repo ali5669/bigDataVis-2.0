@@ -20,7 +20,7 @@ export function render_violinchart (active_node, attr_names, position) {
         })
         if (key == active_node.id) active_node_statistics = data_nodes_statistics[key];
     }
-    console.log(data_dict, active_node_statistics);
+    // console.log(data_dict, active_node_statistics);
 
     // SVG容器尺寸
     const width = violinchartSizes.width;
@@ -48,34 +48,40 @@ export function render_violinchart (active_node, attr_names, position) {
         .range([0, chartWidth])
         .padding(0.05)
 
+    const yMax = Math.max(d3.max(data_dict[attr_names[0]]), 10);
     const yScale = d3.scaleLinear()
-        .domain([0, d3.max(data_dict[attr_names[0]])])
+        .domain([0, yMax])
         .range([chartHeight, margin.top]);
 
     var histogram = d3.histogram()
         .domain(yScale.domain())
-        .thresholds(yScale.ticks(d3.max(data_dict[attr_names[0]])))
+        .thresholds(yScale.ticks(yMax))
         .value(d => d)
 
     var sumstat = new Array();
     for (let key in data_dict) {
+        var histogram_value = histogram(data_dict[key]);
+        histogram_value.forEach(function (value){
+            value["amount"] = Math.log(value.length + 1);
+        })
+
         sumstat.push({
             key:key,
-            value:histogram(data_dict[key])
+            value:histogram_value
         });
     }
-    console.log(sumstat);
+    // console.log(sumstat);
 
-    var maxNum = 0
+    var maxNum = 0;
     sumstat.forEach(function (d) {
-        let lengths = d.value.map(function(a){return a.length;})
+        let lengths = d.value.map(function(a){return a.amount;})
         let longuest = d3.max(lengths)
         if (longuest > maxNum) { maxNum = longuest }
     });
     
     var xNum = d3.scaleLinear()
         .range([0, xScale.bandwidth()])
-        .domain([-maxNum,maxNum])
+        .domain([-maxNum, maxNum])
 
     // 渲染小提琴图
     var violin_g = svg.selectAll("violins")
@@ -98,8 +104,8 @@ export function render_violinchart (active_node, attr_names, position) {
             .transition()
             .duration(cartogramDuration)
             .attr("d", d3.area()
-                .x0(d => xNum(-d.length))
-                .x1(d => xNum(d.length))
+                .x0(d => xNum(-d.amount))
+                .x1(d => xNum(d.amount))
                 .y(d => yScale(d.x0))
                 .curve(d3.curveCatmullRom)
             )
@@ -143,13 +149,13 @@ export function render_violinchart (active_node, attr_names, position) {
                         x0_current = d.x0;
                         x1_current = d.x1;
                         length_current = d.length;
-                        return xNum(-d.length) - 20;
+                        return xNum(-d.amount) - 20;
                     }
-                    else return xNum(-d.length);
+                    else return xNum(-d.amount);
                 })
                 .x1(d => {
-                    if (d.x0 <= y_current && d.x1 >= y_current) return xNum(d.length) + 20;
-                    else return xNum(d.length);
+                    if (d.x0 <= y_current && d.x1 >= y_current) return xNum(d.amount) + 20;
+                    else return xNum(d.amount);
                 })
                 .y(d => yScale(d.x0))
                 .curve(d3.curveCatmullRom)
@@ -165,8 +171,8 @@ export function render_violinchart (active_node, attr_names, position) {
             .transition()
             .duration(100)
             .attr("d", d3.area()
-                .x0(d => xNum(-d.length))
-                .x1(d => xNum(d.length))
+                .x0(d => xNum(-d.amount))
+                .x1(d => xNum(d.amount))
                 .y(d => yScale(d.x0))
                 .curve(d3.curveCatmullRom)
             )
