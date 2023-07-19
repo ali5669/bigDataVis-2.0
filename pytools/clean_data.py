@@ -29,6 +29,8 @@ with open(f'./data/{file_name}.json', 'r', encoding='utf-8') as data_file:
     edges = {}
     data = json.load(data_file)
     country_list = []
+    ids = []
+    multiple_ids = {}
     for node in data['nodes']:
         if 'node_type' not in node.keys():
             if 'type' not in node.keys():
@@ -45,7 +47,22 @@ with open(f'./data/{file_name}.json', 'r', encoding='utf-8') as data_file:
         data_cleaned['country_list'][node['country']] = data_cleaned['country_list'].get(node['country'], 0) + 1
 
         node['degree'] = get_degree(node, data['edges'])
-        data_cleaned['nodes'].append(node)
+        
+        if node['id'] not in ids:
+            ids.append(node['id'])
+            data_cleaned['nodes'].append(node)
+        else:
+            multiple_ids[node['id']] = node
+
+    for node in data_cleaned['nodes']:
+        if node['id'] in multiple_ids:
+            new_type = multiple_ids[node['id']]['node_type']
+            if node['node_type'] == None:
+                node['node_type'] = new_type
+            elif node['node_type'] == 'organization' and new_type != None:
+                node['node_type'] = new_type
+            
+            node['country'] = multiple_ids[node['id']]['country'] if node['country'] == None else node['country']
 
     for edge in data['edges']:
         edge['source'] = edge['source']

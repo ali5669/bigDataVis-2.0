@@ -114,10 +114,10 @@ export function render_sub_graph (data_graph, node_id, method) {
         var node_label = cluster_res[node_id];
         var node_neighbors = new Array();
         data_graph.edges.forEach(function (d) {
-            if (d.source.id == node_id && node_neighbors.indexOf(d.target.id) != -1) {
+            if (d.source.id == node_id && node_neighbors.indexOf(d.target.id) == -1) {
                 node_neighbors.push(d.target.id);
             }
-            else if (d.target.id == node_id && node_neighbors.indexOf(d.source.id) != -1) {
+            else if (d.target.id == node_id && node_neighbors.indexOf(d.source.id) == -1) {
                 node_neighbors.push(d.source.id);
             }
         });

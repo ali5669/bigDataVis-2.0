@@ -84,7 +84,8 @@ var renderGraph = function(){
         person:4,
         movement:5,
         event:6,
-        vessel:7
+        vessel:7,
+        political_organization:8
     }
     //边类型数据
     // var edgeType = data.edge_type_list;
